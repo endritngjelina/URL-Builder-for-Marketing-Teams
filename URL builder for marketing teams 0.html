@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTM URL Builder Pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 0.95rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fafbfc;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .quick-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .preset-btn {
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .results-section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .url-preview {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            word-break: break-all;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .url-preview.has-url {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+            border-color: #28a745;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .qr-section {
+            text-align: center;
+            padding: 24px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .qr-code {
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+
+        .analytics-preview {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+
+        .analytics-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .analytics-item:last-child {
+            border-bottom: none;
+        }
+
+        .analytics-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .analytics-value {
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .campaign-templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .template-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .template-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .template-desc {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .history-section {
+            grid-column: 1 / -1;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .history-url {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            color: #495057;
+            flex: 1;
+            margin-right: 16px;
+            word-break: break-all;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .history-btn {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>UTM URL Builder Pro</h1>
+            <p>Professional campaign tracking for marketing teams</p>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h3 style="margin-bottom: 24px; color: #2c3e50;">Campaign Parameters</h3>
+                
+                <div class="form-group">
+                    <label for="baseUrl">Website URL *</label>
+                    <input type="url" id="baseUrl" placeholder="https://example.com/page" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="campaignName">Campaign Name *</label>
+                    <input type="text" id="campaignName" placeholder="summer_sale_2024">
+                    <div class="quick-presets">
+                        <div class="preset-btn" onclick="setPreset('campaignName', 'black_friday')">Black Friday</div>
+                        <div class="preset-btn" onclick="setPreset('campaignName', 'newsletter')">Newsletter</div>
+                        <div class="preset-btn" onclick="setPreset('campaignName', 'social_media')">Social Media</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="campaignSource">Source *</label>
+                    <input type="text" id="campaignSource" placeholder="google, facebook, newsletter">
+                    <div class="quick-presets">
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'google')">Google</div>
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'facebook')">Facebook</div>
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'instagram')">Instagram</div>
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'twitter')">Twitter</div>
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'linkedin')">LinkedIn</div>
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'email')">Email</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="campaignMedium">Medium *</label>
+                    <select id="campaignMedium">
+                        <option value="">Select Medium</option>
+                        <option value="cpc">CPC (Cost Per Click)</option>
+                        <option value="cpm">CPM (Cost Per Mille)</option>
+                        <option value="social">Social</option>
+                        <option value="email">Email</option>
+                        <option value="organic">Organic</option>
+                        <option value="referral">Referral</option>
+                        <option value="display">Display</option>
+                        <option value="affiliate">Affiliate</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="campaignTerm">Keyword/Term (Optional)</label>
+                    <input type="text" id="campaignTerm" placeholder="running shoes, marketing software">
+                </div>
+
+                <div class="form-group">
+                    <label for="campaignContent">Content (Optional)</label>
+                    <input type="text" id="campaignContent" placeholder="logolink, textlink, banner">
+                </div>
+
+                <h4 style="margin: 24px 0 16px 0; color: #2c3e50;">Campaign Templates</h4>
+                <div class="campaign-templates">
+                    <div class="template-card" onclick="loadTemplate('email')">
+                        <div class="template-title">Email Campaign</div>
+                        <div class="template-desc">Newsletter and email marketing</div>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('social')">
+                        <div class="template-title">Social Media</div>
+                        <div class="template-desc">Facebook, Instagram, Twitter posts</div>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('ppc')">
+                        <div class="template-title">PPC Campaign</div>
+                        <div class="template-desc">Google Ads, Bing Ads</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <h3 style="margin-bottom: 24px; color: #2c3e50;">Generated URL & Tools</h3>
+                
+                <div class="url-preview" id="urlPreview">
+                    Your UTM-tracked URL will appear here...
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyToClipboard()">
+                        📋 Copy URL
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateQR()">
+                        📱 Generate QR Code
+                    </button>
+                </div>
+
+                <div class="success-message" id="successMessage">
+                    ✅ URL copied to clipboard!
+                </div>
+
+                <div class="qr-section" id="qrSection" style="display: none;">
+                    <h4 style="margin-bottom: 16px; color: #2c3e50;">QR Code</h4>
+                    <div class="qr-code" id="qrCode"></div>
+                    <button class="btn btn-secondary" onclick="downloadQR()">⬇️ Download QR Code</button>
+                </div>
+
+                <div class="analytics-preview">
+                    <h4 style="margin-bottom: 16px; color: #2c3e50;">Analytics Preview</h4>
+                    <div class="analytics-item">
+                        <span class="analytics-label">Campaign:</span>
+                        <span class="analytics-value" id="previewCampaign">-</span>
+                    </div>
+                    <div class="analytics-item">
+                        <span class="analytics-label">Source:</span>
+                        <span class="analytics-value" id="previewSource">-</span>
+                    </div>
+                    <div class="analytics-item">
+                        <span class="analytics-label">Medium:</span>
+                        <span class="analytics-value" id="previewMedium">-</span>
+                    </div>
+                    <div class="analytics-item">
+                        <span class="analytics-label">Term:</span>
+                        <span class="analytics-value" id="previewTerm">-</span>
+                    </div>
+                    <div class="analytics-item">
+                        <span class="analytics-label">Content:</span>
+                        <span class="analytics-value" id="previewContent">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h3 style="margin-bottom: 24px; color: #2c3e50;">Recent URLs</h3>
+            <div id="urlHistory">
+                <p style="color: #6c757d; text-align: center; padding: 40px;">No URLs generated yet. Create your first UTM-tracked URL above!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let urlHistory = [];
+        let currentQRCode = null;
+
+        // Form inputs
+        const inputs = {
+            baseUrl: document.getElementById('baseUrl'),
+            campaignName: document.getElementById('campaignName'),
+            campaignSource: document.getElementById('campaignSource'),
+            campaignMedium: document.getElementById('campaignMedium'),
+            campaignTerm: document.getElementById('campaignTerm'),
+            campaignContent: document.getElementById('campaignContent')
+        };
+
+        // Add event listeners to all inputs
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', buildURL);
+            input.addEventListener('change', buildURL);
+        });
+
+        function buildURL() {
+            const baseUrl = inputs.baseUrl.value.trim();
+            const campaign = inputs.campaignName.value.trim();
+            const source = inputs.campaignSource.value.trim();
+            const medium = inputs.campaignMedium.value.trim();
+            const term = inputs.campaignTerm.value.trim();
+            const content = inputs.campaignContent.value.trim();
+
+            if (!baseUrl || !campaign || !source || !medium) {
+                document.getElementById('urlPreview').textContent = 'Your UTM-tracked URL will appear here...';
+                document.getElementById('urlPreview').classList.remove('has-url');
+                updateAnalyticsPreview('', '', '', '', '');
+                return;
+            }
+
+            const url = new URL(baseUrl);
+            url.searchParams.set('utm_campaign', campaign);
+            url.searchParams.set('utm_source', source);
+            url.searchParams.set('utm_medium', medium);
+            
+            if (term) url.searchParams.set('utm_term', term);
+            if (content) url.searchParams.set('utm_content', content);
+
+            const finalUrl = url.toString();
+            const urlPreview = document.getElementById('urlPreview');
+            urlPreview.textContent = finalUrl;
+            urlPreview.classList.add('has-url');
+
+            updateAnalyticsPreview(campaign, source, medium, term, content);
+        }
+
+        function updateAnalyticsPreview(campaign, source, medium, term, content) {
+            document.getElementById('previewCampaign').textContent = campaign || '-';
+            document.getElementById('previewSource').textContent = source || '-';
+            document.getElementById('previewMedium').textContent = medium || '-';
+            document.getElementById('previewTerm').textContent = term || '-';
+            document.getElementById('previewContent').textContent = content || '-';
+        }
+
+        function setPreset(fieldId, value) {
+            document.getElementById(fieldId).value = value;
+            buildURL();
+        }
+
+        function loadTemplate(type) {
+            const templates = {
+                email: {
+                    source: 'newsletter',
+                    medium: 'email',
+                    campaign: 'monthly_newsletter'
+                },
+                social: {
+                    source: 'facebook',
+                    medium: 'social',
+                    campaign: 'social_engagement'
+                },
+                ppc: {
+                    source: 'google',
+                    medium: 'cpc',
+                    campaign: 'paid_search'
+                }
+            };
+
+            const template = templates[type];
+            if (template) {
+                inputs.campaignSource.value = template.source;
+                inputs.campaignMedium.value = template.medium;
+                inputs.campaignName.value = template.campaign;
+                buildURL();
+            }
+        }
+
+        async function copyToClipboard() {
+            const urlText = document.getElementById('urlPreview').textContent;
+            if (urlText === 'Your UTM-tracked URL will appear here...') {
+                alert('Please build a URL first!');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(urlText);
+                showSuccessMessage();
+                addToHistory(urlText);
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = urlText;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showSuccessMessage();
+                    addToHistory(urlText);
+                } catch (err) {
+                    alert('Failed to copy URL');
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+
+        function showSuccessMessage() {
+            const message = document.getElementById('successMessage');
+            message.style.display = 'flex';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 3000);
+        }
+
+        function generateQR() {
+            const urlText = document.getElementById('urlPreview').textContent;
+            if (urlText === 'Your UTM-tracked URL will appear here...') {
+                alert('Please build a URL first!');
+                return;
+            }
+
+            const qr = qrcode(0, 'M');
+            qr.addData(urlText);
+            qr.make();
+
+            const qrSection = document.getElementById('qrSection');
+            const qrCode = document.getElementById('qrCode');
+            
+            qrCode.innerHTML = qr.createImgTag(6, 8);
+            qrSection.style.display = 'block';
+            qrSection.classList.add('fade-in');
+            
+            currentQRCode = qr;
+        }
+
+        function downloadQR() {
+            if (!currentQRCode) return;
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const size = 300;
+            canvas.width = size;
+            canvas.height = size;
+
+            // Create QR code data URL
+            const qrDataURL = currentQRCode.createDataURL(6, 8);
+            const img = new Image();
+            img.onload = function() {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, size, size);
+                ctx.drawImage(img, 0, 0, size, size);
+
+                // Download
+                const link = document.createElement('a');
+                link.download = 'utm-qr-code.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            };
+            img.src = qrDataURL;
+        }
+
+        function addToHistory(url) {
+            const timestamp = new Date().toLocaleString();
+            const historyItem = {
+                url: url,
+                timestamp: timestamp,
+                campaign: inputs.campaignName.value,
+                source: inputs.campaignSource.value,
+                medium: inputs.campaignMedium.value
+            };
+
+            urlHistory.unshift(historyItem);
+            if (urlHistory.length > 10) urlHistory.pop(); // Keep only last 10
+            
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const historyContainer = document.getElementById('urlHistory');
+            
+            if (urlHistory.length === 0) {
+                historyContainer.innerHTML = '<p style="color: #6c757d; text-align: center; padding: 40px;">No URLs generated yet. Create your first UTM-tracked URL above!</p>';
+                return;
+            }
+
+            historyContainer.innerHTML = urlHistory.map((item, index) => `
+                <div class="history-item fade-in">
+                    <div>
+                        <div class="history-url">${item.url}</div>
+                        <small style="color: #6c757d;">${item.timestamp} • ${item.campaign} • ${item.source} • ${item.medium}</small>
+                    </div>
+                    <div class="history-actions">
+                        <button class="btn btn-secondary history-btn" onclick="copyHistoryURL(${index})">Copy</button>
+                        <button class="btn btn-secondary history-btn" onclick="generateHistoryQR(${index})">QR</button>
+                        <button class="btn btn-secondary history-btn" onclick="removeFromHistory(${index})">×</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function copyHistoryURL(index) {
+            try {
+                await navigator.clipboard.writeText(urlHistory[index].url);
+                showSuccessMessage();
+            } catch (err) {
+                alert('Failed to copy URL');
+            }
+        }
+
+        function generateHistoryQR(index) {
+            const url = urlHistory[index].url;
+            const qr = qrcode(0, 'M');
+            qr.addData(url);
+            qr.make();
+
+            const qrSection = document.getElementById('qrSection');
+            const qrCode = document.getElementById('qrCode');
+            
+            qrCode.innerHTML = qr.createImgTag(6, 8);
+            qrSection.style.display = 'block';
+            qrSection.scrollIntoView({ behavior: 'smooth' });
+            
+            currentQRCode = qr;
+        }
+
+        function removeFromHistory(index) {
+            urlHistory.splice(index, 1);
+            renderHistory();
+        }
+
+        // Initialize with example URL
+        document.addEventListener('DOMContentLoaded', function() {
+            inputs.baseUrl.value = 'https://example.com';
+            buildURL();
+        });
+    </script>
+</body>
+</html>
