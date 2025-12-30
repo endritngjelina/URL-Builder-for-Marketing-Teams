@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTM URL Builder Pro - Marketing Campaign Manager</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --primary-dark: #3367d6;
+            --secondary-color: #f8f9fa;
+            --accent-color: #34a853;
+            --warning-color: #fbbc05;
+            --error-color: #ea4335;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --border-color: #dadce0;
+            --shadow-sm: 0 1px 2px 0 rgba(60,64,67,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(60,64,67,0.15);
+            --shadow-lg: 0 10px 15px -3px rgba(60,64,67,0.2);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(218, 220, 224, 0.3);
+            --success-gradient: linear-gradient(135deg, #34a853 0%, #1e8e3e 100%);
+            --warning-gradient: linear-gradient(135deg, #fbbc05 0%, #f29900 100%);
+            --error-gradient: linear-gradient(135deg, #ea4335 0%, #d93025 100%);
+            --dark-bg: #1f1f1f;
+            --dark-card: #2d2e30;
+            --dark-text: #e8eaed;
+            --dark-border: #3c4043;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Google Sans', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #121212 0%, #1e1e1e 100%);
+            color: var(--dark-text);
+            --card-bg: rgba(45, 46, 48, 0.95);
+            --card-border: rgba(60, 64, 67, 0.3);
+            --border-color: #3c4043;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .header {
+            background: rgba(32, 33, 36, 0.95);
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        body.dark-mode .logo-text {
+            color: var(--dark-text);
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        .main-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .main-panel {
+            border: 1px solid var(--dark-border);
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .panel {
+            border: 1px solid var(--dark-border);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        body.dark-mode .section-title {
+            color: var(--dark-text);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        body.dark-mode label {
+            color: var(--dark-text);
+        }
+
+        .required {
+            color: var(--error-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        body.dark-mode input,
+        body.dark-mode select,
+        body.dark-mode textarea {
+            color: var(--dark-text);
+            border-color: var(--dark-border);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+        }
+
+        body.dark-mode input:focus,
+        body.dark-mode select:focus,
+        body.dark-mode textarea:focus {
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.3);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-addon {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            pointer-events: none;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: #e8eaed;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success:hover {
+            background: #2e8b57;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .url-preview {
+            background: #f8f9fa;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            word-break: break-all;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .url-preview {
+            background: #2d2e30;
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .url-preview.has-url {
+            background: #e8f0fe;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        body.dark-mode .url-preview.has-url {
+            background: rgba(66, 133, 244, 0.1);
+            color: #8ab4f8;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .qr-container {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .qr-container {
+            background: var(--dark-card);
+            border-color: var(--dark-border);
+        }
+
+        .qr-code {
+            margin: 1rem 0;
+        }
+
+        .campaign-history {
+            max-height: 300px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) transparent;
+        }
+
+        .campaign-history::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .campaign-history::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .campaign-history::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        .history-item {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        body.dark-mode .history-item {
+            background: var(--dark-card);
+            border-color: var(--dark-border);
+        }
+
+        .history-item:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .history-title {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        body.dark-mode .history-title {
+            color: var(--dark-text);
+        }
+
+        .history-url {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+            margin-top: 0.25rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .templates {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .template-item {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        body.dark-mode .template-item {
+            background: var(--dark-card);
+            border-color: var(--dark-border);
+        }
+
+        .template-item:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .template-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        body.dark-mode .template-name {
+            color: var(--dark-text);
+        }
+
+        .template-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .metric {
+            background: var(--dark-card);
+            border-color: var(--dark-border);
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            background: var(--accent-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .validation-error {
+            color: var(--error-color);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .help-text {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .dark-mode-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.dark-mode .dark-mode-toggle {
+            color: var(--dark-text);
+        }
+
+        .dark-mode-toggle:hover {
+            background: rgba(66, 133, 244, 0.1);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: var(--text-primary);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+            font-weight: normal;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .performance-prediction {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-left: 4px solid var(--accent-color);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .performance-prediction {
+            background: var(--dark-card);
+            border-left-color: var(--accent-color);
+        }
+
+        .prediction-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        body.dark-mode .prediction-title {
+            color: var(--dark-text);
+        }
+
+        .prediction-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .short-url-container {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .short-url-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        body.dark-mode .short-url-label {
+            color: var(--dark-text);
+        }
+
+        .short-url {
+            font-family: 'Roboto Mono', monospace;
+            color: var(--accent-color);
+            word-break: break-all;
+            font-size: 0.875rem;
+        }
+
+        .short-url-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stats-refresh {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .stats-refresh:hover {
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .header-stats {
+                display: none;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .main-panel, .panel {
+                padding: 1.5rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(66, 133, 244, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        body.dark-mode .particle {
+            background: rgba(66, 133, 244, 0.05);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles" id="particles"></div>
+    
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">UTM</div>
+                <div class="logo-text">Campaign URL Builder Pro</div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalUrls">0</div>
+                    <div class="stat-label">URLs Generated</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalCampaigns">0</div>
+                    <div class="stat-label">Campaigns</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalClicks">0</div>
+                    <div class="stat-label">Est. Clicks</div>
+                </div>
+            </div>
+            <button class="dark-mode-toggle" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-panel">
+            <div class="stats-header">
+                <h2 class="section-title">
+                    <i class="fas fa-bullseye"></i> Campaign URL Builder
+                </h2>
+                <button class="stats-refresh" title="Refresh Analytics" onclick="refreshAnalytics()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            
+            <form id="utmForm">
+                <div class="form-group">
+                    <label for="baseUrl">Website URL <span class="required">*</span></label>
+                    <input type="url" id="baseUrl" placeholder="https://example.com/landing-page" required>
+                    <div class="validation-error" id="baseUrlError">Please enter a valid URL starting with http:// or https://</div>
+                    <div class="help-text">Enter the destination URL for your campaign</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="utmSource">Campaign Source <span class="required">*</span></label>
+                        <input type="text" id="utmSource" placeholder="google, facebook, newsletter" required>
+                        <div class="validation-error" id="sourceError">Source is required</div>
+                        <div class="help-text">Traffic source (e.g., google, facebook)</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="utmMedium">Campaign Medium <span class="required">*</span></label>
+                        <select id="utmMedium" required>
+                            <option value="">Select medium</option>
+                            <option value="cpc">CPC (Cost Per Click)</option>
+                            <option value="cpm">CPM (Cost Per Mille)</option>
+                            <option value="email">Email</option>
+                            <option value="social">Social Media</option>
+                            <option value="organic">Organic Search</option>
+                            <option value="referral">Referral</option>
+                            <option value="display">Display Advertising</option>
+                            <option value="affiliate">Affiliate</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                        <div class="validation-error" id="mediumError">Medium is required</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="utmCampaign">Campaign Name <span class="required">*</span></label>
+                        <input type="text" id="utmCampaign" placeholder="summer_sale_2024" required>
+                        <div class="validation-error" id="campaignError">Campaign name is required</div>
+                        <div class="help-text">Unique campaign identifier</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="utmTerm">Campaign Term</label>
+                        <input type="text" id="utmTerm" placeholder="running shoes, fitness">
+                        <div class="help-text">Keywords for paid search</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="utmContent">Campaign Content</label>
+                    <input type="text" id="utmContent" placeholder="banner_ad, text_link">
+                    <div class="help-text">Differentiate similar content or links</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="customParams">Custom Parameters</label>
+                    <textarea id="customParams" rows="3" placeholder="param1=value1&#10;param2=value2"></textarea>
+                    <div class="help-text">Additional parameters (one per line, format: key=value)</div>
+                </div>
+            </form>
+
+            <div class="form-group">
+                <label>Generated URL Preview</label>
+                <div class="url-preview" id="urlPreview">
+                    Your UTM-tracked URL will appear here...
+                </div>
+            </div>
+
+            <div class="short-url-container" id="shortUrlContainer">
+                <div class="short-url-label">Shortened URL:</div>
+                <div class="short-url" id="shortUrl"></div>
+                <div class="short-url-actions">
+                    <button class="btn btn-secondary" onclick="copyShortUrl()">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateShortUrl()">
+                        <i class="fas fa-link"></i> Regenerate
+                    </button>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="generateUrl()">
+                    <i class="fas fa-link"></i> Generate URL
+                </button>
+                <button class="btn btn-success" onclick="copyUrl()" id="copyBtn" disabled>
+                    <i class="fas fa-copy"></i> Copy URL
+                </button>
+                <button class="btn btn-secondary" onclick="generateShortUrl()">
+                    <i class="fas fa-compress"></i> Shorten URL
+                </button>
+                <button class="btn btn-secondary" onclick="clearForm()">
+                    <i class="fas fa-trash"></i> Clear Form
+                </button>
+                <button class="btn btn-secondary" onclick="exportData()">
+                    <i class="fas fa-file-export"></i> Export Data
+                </button>
+            </div>
+
+            <div class="performance-prediction" id="performancePrediction">
+                <div class="prediction-title">Performance Prediction:</div>
+                <div class="prediction-value" id="predictionValue">Fill out campaign details to see prediction</div>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="panel">
+                <h3 class="section-title"><i class="fas fa-qrcode"></i> QR Code</h3>
+                <div class="qr-container">
+                    <div id="qrcode" class="qr-code"></div>
+                    <button class="btn btn-secondary" onclick="downloadQR()" id="downloadQRBtn" disabled>
+                        <i class="fas fa-download"></i> Download QR
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3 class="section-title"><i class="fas fa-clipboard-list"></i> Campaign Templates</h3>
+                <div class="templates">
+                    <div class="template-item" onclick="loadTemplate('email')">
+                        <div class="template-name"><i class="fas fa-envelope"></i> Email Campaign</div>
+                        <div class="template-desc">Newsletter and email marketing</div>
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('social')">
+                        <div class="template-name"><i class="fas fa-hashtag"></i> Social Media</div>
+                        <div class="template-desc">Facebook, Instagram, LinkedIn posts</div>
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('google')">
+                        <div class="template-name"><i class="fab fa-google"></i> Google Ads</div>
+                        <div class="template-desc">Search and display campaigns</div>
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('affiliate')">
+                        <div class="template-name"><i class="fas fa-handshake"></i> Affiliate Program</div>
+                        <div class="template-desc">Partner and affiliate tracking</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3 class="section-title"><i class="fas fa-chart-line"></i> Campaign Analytics</h3>
+                <div class="analytics-grid">
+                    <div class="metric">
+                        <div class="metric-value" id="todayUrls">0</div>
+                        <div class="metric-label">Today</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="weekUrls">0</div>
+                        <div class="metric-label">This Week</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="monthUrls">0</div>
+                        <div class="metric-label">This Month</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="avgParams">2.5</div>
+                        <div class="metric-label">Avg Parameters</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3 class="section-title"><i class="fas fa-history"></i> Recent Campaigns</h3>
+                <div class="campaign-history" id="campaignHistory">
+                    <div class="history-item" onclick="loadFromHistory(0)">
+                        <div class="history-title">Welcome Campaign</div>
+                        <div class="history-url">example.com?utm_source=demo...</div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                            Demo campaign
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUrl = '';
+        let currentShortUrl = '';
+        let qr = null;
+        let campaignHistory = JSON.parse(localStorage.getItem('utm_campaigns') || '[]');
+        let analytics = JSON.parse(localStorage.getItem('utm_analytics') || '{"total": 0, "today": 0, "week": 0, "month": 0}');
+        let darkMode = localStorage.getItem('darkMode') === 'true';
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up dark mode
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('darkModeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+            }
+            
+            updateAnalytics();
+            loadCampaignHistory();
+            createParticles();
+            setupEventListeners();
+            loadDraft();
+            
+            // Real-time validation
+            document.getElementById('baseUrl').addEventListener('input', validateBaseUrl);
+            document.getElementById('utmSource').addEventListener('input', validateSource);
+            document.getElementById('utmMedium').addEventListener('change', validateMedium);
+            document.getElementById('utmCampaign').addEventListener('input', validateCampaign);
+            
+            // Auto-generate when all required fields are filled
+            document.getElementById('utmForm').addEventListener('input', debounce(generateUrl, 500));
+            
+            // Initialize performance prediction
+            updatePerformancePrediction();
+        });
+
+        function setupEventListeners() {
+            // Dark mode toggle
+            document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
+        }
+
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode', darkMode);
+            localStorage.setItem('darkMode', darkMode);
+            
+            if (darkMode) {
+                document.getElementById('darkModeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                document.getElementById('darkModeToggle').innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function validateBaseUrl() {
+            const baseUrl = document.getElementById('baseUrl').value.trim();
+            const errorElement = document.getElementById('baseUrlError');
+            
+            if (!baseUrl) {
+                errorElement.style.display = 'none';
+                return false;
+            }
+            
+            const isValid = /^https?:\/\/.+/.test(baseUrl);
+            errorElement.style.display = isValid ? 'none' : 'block';
+            return isValid;
+        }
+
+        function validateSource() {
+            const source = document.getElementById('utmSource').value.trim();
+            const errorElement = document.getElementById('sourceError');
+            
+            if (!source) {
+                errorElement.style.display = 'block';
+                return false;
+            }
+            
+            errorElement.style.display = 'none';
+            return true;
+        }
+
+        function validateMedium() {
+            const medium = document.getElementById('utmMedium').value;
+            const errorElement = document.getElementById('mediumError');
+            
+            if (!medium) {
+                errorElement.style.display = 'block';
+                return false;
+            }
+            
+            errorElement.style.display = 'none';
+            return true;
+        }
+
+        function validateCampaign() {
+            const campaign = document.getElementById('utmCampaign').value.trim();
+            const errorElement = document.getElementById('campaignError');
+            
+            if (!campaign) {
+                errorElement.style.display = 'block';
+                return false;
+            }
+            
+            errorElement.style.display = 'none';
+            return true;
+        }
+
+        function generateUrl() {
+            if (!validateBaseUrl() || !validateSource() || !validateMedium() || !validateCampaign()) {
+                document.getElementById('urlPreview').textContent = 'Please fill in all required fields correctly';
+                document.getElementById('urlPreview').classList.remove('has-url');
+                document.getElementById('copyBtn').disabled = true;
+                document.getElementById('downloadQRBtn').disabled = true;
+                return;
+            }
+
+            const baseUrl = document.getElementById('baseUrl').value.trim();
+            const utmSource = document.getElementById('utmSource').value.trim();
+            const utmMedium = document.getElementById('utmMedium').value;
+            const utmCampaign = document.getElementById('utmCampaign').value.trim();
+            const utmTerm = document.getElementById('utmTerm').value.trim();
+            const utmContent = document.getElementById('utmContent').value.trim();
+            const customParams = document.getElementById('customParams').value.trim();
+
+            try {
+                const url = new URL(baseUrl);
+                
+                // Add UTM parameters
+                url.searchParams.set('utm_source', utmSource);
+                url.searchParams.set('utm_medium', utmMedium);
+                url.searchParams.set('utm_campaign', utmCampaign);
+                
+                if (utmTerm) url.searchParams.set('utm_term', utmTerm);
+                if (utmContent) url.searchParams.set('utm_content', utmContent);
+
+                // Add custom parameters
+                if (customParams) {
+                    const customLines = customParams.split('\n');
+                    customLines.forEach(line => {
+                        const [key, ...valueParts] = line.split('=');
+                        if (key && valueParts.length > 0) {
+                            const value = valueParts.join('=');
+                            url.searchParams.set(key.trim(), value.trim());
+                        }
+                    });
+                }
+
+                currentUrl = url.toString();
+                document.getElementById('urlPreview').textContent = currentUrl;
+                document.getElementById('urlPreview').classList.add('has-url');
+                document.getElementById('copyBtn').disabled = false;
+                document.getElementById('downloadQRBtn').disabled = false;
+
+                // Generate QR Code
+                generateQRCode(currentUrl);
+
+                // Save to history
+                saveCampaign({
+                    url: currentUrl,
+                    source: utmSource,
+                    medium: utmMedium,
+                    campaign: utmCampaign,
+                    term: utmTerm,
+                    content: utmContent,
+                    timestamp: new Date().toISOString()
+                });
+
+                // Update performance prediction
+                updatePerformancePrediction();
+                
+                // Auto-generate short URL if it doesn't exist
+                if (!currentShortUrl) {
+                    generateShortUrl();
+                }
+
+            } catch (error) {
+                document.getElementById('urlPreview').textContent = 'Invalid URL format. Please check your website URL.';
+                document.getElementById('urlPreview').classList.remove('has-url');
+                document.getElementById('copyBtn').disabled = true;
+                document.getElementById('downloadQRBtn').disabled = true;
+            }
+        }
+
+        function generateQRCode(url) {
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+            
+            if (url) {
+                qr = qrcode(0, 'M');
+                qr.addData(url);
+                qr.make();
+                
+                const qrImage = qr.createImgTag(4, 8);
+                qrContainer.innerHTML = qrImage;
+            }
+        }
+
+        function copyUrl() {
+            if (currentUrl) {
+                navigator.clipboard.writeText(currentUrl).then(() => {
+                    showToast('URL copied to clipboard!');
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = currentUrl;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showToast('URL copied to clipboard!');
+                });
+            }
+        }
+
+        function downloadQR() {
+            if (qr && currentUrl) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const qrSize = 256;
+                
+                canvas.width = qrSize;
+                canvas.height = qrSize;
+                
+                // Create QR code data URL
+                const qrDataUrl = qr.createDataURL(4, 8);
+                const img = new Image();
+                
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, qrSize, qrSize);
+                    
+                    // Download
+                    const link = document.createElement('a');
+                    link.download = `utm-qr-code-${Date.now()}.png`;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    
+                    showToast('QR Code downloaded!');
+                };
+                
+                img.src = qrDataUrl;
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('utmForm').reset();
+            document.getElementById('urlPreview').textContent = 'Your UTM-tracked URL will appear here...';
+            document.getElementById('urlPreview').classList.remove('has-url');
+            document.getElementById('copyBtn').disabled = true;
+            document.getElementById('downloadQRBtn').disabled = true;
+            document.getElementById('qrcode').innerHTML = '';
+            document.getElementById('shortUrlContainer').style.display = 'none';
+            currentUrl = '';
+            currentShortUrl = '';
+            
+            // Clear validation errors
+            document.querySelectorAll('.validation-error').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Clear performance prediction
+            document.getElementById('predictionValue').textContent = 'Fill out campaign details to see prediction';
+            
+            // Clear draft
+            localStorage.removeItem('utm_draft');
+        }
+
+        function loadTemplate(type) {
+            const templates = {
+                email: {
+                    source: 'newsletter',
+                    medium: 'email',
+                    campaign: 'monthly_newsletter',
+                    content: 'header_link'
+                },
+                social: {
+                    source: 'facebook',
+                    medium: 'social',
+                    campaign: 'brand_awareness',
+                    content: 'post_link'
+                },
+                google: {
+                    source: 'google',
+                    medium: 'cpc',
+                    campaign: 'search_campaign',
+                    term: 'your keywords'
+                },
+                affiliate: {
+                    source: 'affiliate_partner',
+                    medium: 'affiliate',
+                    campaign: 'partner_program',
+                    content: 'banner_300x250'
+                }
+            };
+
+            const template = templates[type];
+            if (template) {
+                document.getElementById('utmSource').value = template.source || '';
+                document.getElementById('utmMedium').value = template.medium || '';
+                document.getElementById('utmCampaign').value = template.campaign || '';
+                document.getElementById('utmTerm').value = template.term || '';
+                document.getElementById('utmContent').value = template.content || '';
+                
+                showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} template loaded!`);
+                generateUrl();
+            }
+        }
+
+        function saveCampaign(campaign) {
+            campaignHistory.unshift(campaign);
+            if (campaignHistory.length > 10) {
+                campaignHistory = campaignHistory.slice(0, 10);
+            }
+            localStorage.setItem('utm_campaigns', JSON.stringify(campaignHistory));
+            
+            // Update analytics
+            const now = new Date();
+            analytics.total = (analytics.total || 0) + 1;
+            analytics.today = (analytics.today || 0) + 1;
+            analytics.week = (analytics.week || 0) + 1;
+            analytics.month = (analytics.month || 0) + 1;
+            localStorage.setItem('utm_analytics', JSON.stringify(analytics));
+            
+            updateAnalytics();
+            loadCampaignHistory();
+        }
+
+        function loadCampaignHistory() {
+            const historyContainer = document.getElementById('campaignHistory');
+            historyContainer.innerHTML = '';
+            
+            if (campaignHistory.length === 0) {
+                historyContainer.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No campaigns yet. Create your first campaign above!</div>';
+                return;
+            }
+            
+            campaignHistory.forEach((campaign, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.onclick = () => loadFromHistory(index);
+                
+                const title = `${campaign.campaign} (${campaign.source})`;
+                const truncatedUrl = campaign.url.length > 50 ? campaign.url.substring(0, 50) + '...' : campaign.url;
+                const date = new Date(campaign.timestamp);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                
+                historyItem.innerHTML = `
+                    <div class="history-title">${title}</div>
+                    <div class="history-url">${truncatedUrl}</div>
+                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                        ${formattedDate}
+                    </div>
+                `;
+                
+                historyContainer.appendChild(historyItem);
+            });
+        }
+
+        function loadFromHistory(index) {
+            const campaign = campaignHistory[index];
+            if (campaign) {
+                // Extract base URL (remove all parameters first)
+                const url = new URL(campaign.url);
+                const baseUrl = `${url.protocol}//${url.host}${url.pathname}`;
+                
+                document.getElementById('baseUrl').value = baseUrl;
+                document.getElementById('utmSource').value = campaign.source || '';
+                document.getElementById('utmMedium').value = campaign.medium || '';
+                document.getElementById('utmCampaign').value = campaign.campaign || '';
+                document.getElementById('utmTerm').value = campaign.term || '';
+                document.getElementById('utmContent').value = campaign.content || '';
+                
+                generateUrl();
+                showToast('Campaign loaded from history!');
+            }
+        }
+
+        function updateAnalytics() {
+            document.getElementById('totalUrls').textContent = analytics.total || 0;
+            document.getElementById('totalCampaigns').textContent = new Set(campaignHistory.map(c => c.campaign)).size;
+            document.getElementById('totalClicks').textContent = Math.floor((analytics.total || 0) * 15.7); // Simulated click estimate
+            
+            document.getElementById('todayUrls').textContent = analytics.today || 0;
+            document.getElementById('weekUrls').textContent = analytics.week || 0;
+            document.getElementById('monthUrls').textContent = analytics.month || 0;
+            
+            // Calculate average parameters
+            const avgParams = campaignHistory.length > 0 ? 
+                (campaignHistory.reduce((sum, c) => {
+                    let count = 3; // base UTM params
+                    if (c.term) count++;
+                    if (c.content) count++;
+                    return sum + count;
+                }, 0) / campaignHistory.length).toFixed(1) : '0';
+            
+            document.getElementById('avgParams').textContent = avgParams;
+        }
+
+        function refreshAnalytics() {
+            // In a real app, this would fetch fresh data from a server
+            // Here we'll just simulate a refresh
+            analytics.today += Math.floor(Math.random() * 3);
+            analytics.week += Math.floor(Math.random() * 10);
+            analytics.month += Math.floor(Math.random() * 30);
+            analytics.total = campaignHistory.length;
+            
+            localStorage.setItem('utm_analytics', JSON.stringify(analytics));
+            updateAnalytics();
+            showToast('Analytics refreshed!');
+        }
+
+        function exportData() {
+            const exportData = {
+                campaigns: campaignHistory,
+                analytics: analytics,
+                exportDate: new Date().toISOString(),
+                totalCampaigns: campaignHistory.length
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `utm-campaigns-export-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showToast('Campaign data exported!');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 4 + 2;
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                const delay = Math.random() * 6;
+                const hue = Math.floor(Math.random() * 360);
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.background = `hsla(${hue}, 70%, 60%, 0.1)`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        function autoSave() {
+            const formData = {
+                baseUrl: document.getElementById('baseUrl').value,
+                utmSource: document.getElementById('utmSource').value,
+                utmMedium: document.getElementById('utmMedium').value,
+                utmCampaign: document.getElementById('utmCampaign').value,
+                utmTerm: document.getElementById('utmTerm').value,
+                utmContent: document.getElementById('utmContent').value,
+                customParams: document.getElementById('customParams').value
+            };
+            localStorage.setItem('utm_draft', JSON.stringify(formData));
+        }
+
+        function loadDraft() {
+            const draft = localStorage.getItem('utm_draft');
+            if (draft) {
+                const formData = JSON.parse(draft);
+                Object.keys(formData).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element && formData[key]) {
+                        element.value = formData[key];
+                    }
+                });
+                
+                // Generate URL if we have enough data
+                if (formData.baseUrl && formData.utmSource && formData.utmMedium && formData.utmCampaign) {
+                    setTimeout(generateUrl, 300);
+                }
+            }
+        }
+
+        // Set up auto-save
+        ['baseUrl', 'utmSource', 'utmMedium', 'utmCampaign', 'utmTerm', 'utmContent', 'customParams'].forEach(id => {
+            document.getElementById(id).addEventListener('input', debounce(autoSave, 1000));
+        });
+
+        function generateShortUrl() {
+            if (!currentUrl) {
+                showToast('Generate a URL first!');
+                return;
+            }
+            
+            // Simulate URL shortening
+            const hash = btoa(currentUrl).substring(0, 8).replace(/[+/=]/g, '');
+            currentShortUrl = `https://short.utm/${hash}`;
+            
+            document.getElementById('shortUrl').textContent = currentShortUrl;
+            document.getElementById('shortUrlContainer').style.display = 'block';
+            
+            showToast('Short URL generated!');
+        }
+
+        function copyShortUrl() {
+            if (currentShortUrl) {
+                navigator.clipboard.writeText(currentShortUrl).then(() => {
+                    showToast('Short URL copied!');
+                });
+            }
+        }
+
+        function updatePerformancePrediction() {
+            const utmMedium = document.getElementById('utmMedium').value;
+            const utmCampaign = document.getElementById('utmCampaign').value.trim();
+            const predictionElement = document.getElementById('predictionValue');
+            
+            if (!utmMedium || !utmCampaign) {
+                predictionElement.textContent = 'Fill out campaign details to see prediction';
+                return;
+            }
+            
+            // Simulate performance prediction based on medium
+            const predictions = {
+                'cpc': 'High conversion potential (8-12% CTR)',
+                'cpm': 'Good for brand awareness (3-5% CTR)',
+                'email': 'Excellent for engagement (15-25% CTR)',
+                'social': 'Good for virality (5-8% CTR)',
+                'organic': 'Steady long-term traffic (4-7% CTR)',
+                'referral': 'High-quality traffic (6-10% CTR)',
+                'display': 'Good for reach (2-4% CTR)',
+                'affiliate': 'Performance-based (8-15% CTR)',
+                'custom': 'Varies based on implementation'
+            };
+            
+            const prediction = predictions[utmMedium] || 'Good performance expected';
+            predictionElement.textContent = prediction;
+        }
+    </script>
+</body>
+</html>
