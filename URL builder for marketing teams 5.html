@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTM URL Builder Pro - Marketing Campaign Manager</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #0078d4;
+            --primary-blue-hover: #106ebe;
+            --primary-blue-light: #e6f3ff;
+            --secondary-gray: #323130;
+            --light-gray: #f3f2f1;
+            --border-gray: #d2d0ce;
+            --success-green: #107c10;
+            --warning-orange: #ff8c00;
+            --text-primary: #323130;
+            --text-secondary: #605e5c;
+            --surface-white: #ffffff;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: var(--surface-white);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), #00bcf2, var(--primary-blue));
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-section, .preview-section {
+            background: var(--surface-white);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-section:hover, .preview-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--primary-blue);
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--surface-white);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-group input:hover, .form-group select:hover {
+            border-color: var(--primary-blue-hover);
+        }
+
+        .required {
+            color: #d13438;
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .url-preview {
+            background: var(--light-gray);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid var(--border-gray);
+            margin-bottom: 20px;
+            position: relative;
+            overflow-wrap: break-word;
+            word-break: break-all;
+        }
+
+        .url-preview.has-url {
+            background: var(--primary-blue-light);
+            border-color: var(--primary-blue);
+        }
+
+        .url-text {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: var(--text-primary);
+            min-height: 20px;
+        }
+
+        .url-text.placeholder {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            min-height: 44px;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-blue-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 120, 212, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--text-primary);
+            border: 2px solid var(--border-gray);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-gray);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #0e6b0e;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .qr-container {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--light-gray);
+            border-radius: 12px;
+        }
+
+        #qrcode {
+            margin: 0 auto;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            display: inline-block;
+            box-shadow: var(--shadow);
+        }
+
+        .analytics-section {
+            background: var(--surface-white);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-hover));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .campaign-history {
+            background: var(--surface-white);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+        }
+
+        .history-item {
+            padding: 15px;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            background: var(--light-gray);
+            transform: translateX(5px);
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .preset-btn {
+            padding: 8px 16px;
+            background: var(--light-gray);
+            border: 1px solid var(--border-gray);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preset-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .validation-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .validation-message.error {
+            background: #fde7e9;
+            color: #d13438;
+            border: 1px solid #d13438;
+        }
+
+        .validation-message.success {
+            background: #e7f5e7;
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+        }
+
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--secondary-gray);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header fade-in">
+            <h1>UTM URL Builder Pro</h1>
+            <p>Professional campaign tracking and analytics platform for marketing teams. Build, track, and optimize your marketing campaigns with enterprise-grade URL management.</p>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section fade-in">
+                <h2 class="section-title">Campaign Builder</h2>
+                
+                <div class="preset-buttons">
+                    <button class="preset-btn" onclick="loadPreset('email')">📧 Email Campaign</button>
+                    <button class="preset-btn" onclick="loadPreset('social')">📱 Social Media</button>
+                    <button class="preset-btn" onclick="loadPreset('ppc')">💰 PPC Campaign</button>
+                    <button class="preset-btn" onclick="loadPreset('content')">📝 Content Marketing</button>
+                </div>
+
+                <form id="utmForm">
+                    <div class="form-group">
+                        <label for="baseUrl">Website URL <span class="required">*</span></label>
+                        <input type="url" id="baseUrl" placeholder="https://www.example.com/landing-page" required>
+                        <div class="help-text">The destination URL where users will land</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="campaign">Campaign Name <span class="required">*</span></label>
+                        <input type="text" id="campaign" placeholder="summer_sale_2024" required>
+                        <div class="help-text">Identify your marketing campaign (e.g., product_launch, holiday_sale)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="source">Campaign Source <span class="required">*</span></label>
+                        <input type="text" id="source" placeholder="google, facebook, newsletter" required>
+                        <div class="help-text">Where the traffic is coming from</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medium">Campaign Medium <span class="required">*</span></label>
+                        <select id="medium" required>
+                            <option value="">Select Medium</option>
+                            <option value="email">Email</option>
+                            <option value="cpc">Cost Per Click (CPC)</option>
+                            <option value="social">Social Media</option>
+                            <option value="organic">Organic Search</option>
+                            <option value="referral">Referral</option>
+                            <option value="display">Display Advertising</option>
+                            <option value="affiliate">Affiliate</option>
+                            <option value="video">Video</option>
+                            <option value="podcast">Podcast</option>
+                            <option value="print">Print</option>
+                            <option value="direct">Direct Mail</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="help-text">The marketing medium or channel</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">Campaign Content <span class="tooltip" data-tooltip="Optional but recommended for A/B testing">ⓘ</span></label>
+                        <input type="text" id="content" placeholder="banner_ad, text_link, cta_button">
+                        <div class="help-text">Differentiate similar content or ads (optional)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="term">Campaign Term <span class="tooltip" data-tooltip="Mainly used for paid search campaigns">ⓘ</span></label>
+                        <input type="text" id="term" placeholder="running+shoes, digital+marketing">
+                        <div class="help-text">Paid search keywords (optional)</div>
+                    </div>
+                </form>
+
+                <div class="validation-message" id="validationMessage"></div>
+            </div>
+
+            <div class="preview-section fade-in">
+                <h2 class="section-title">URL Preview & Export</h2>
+                
+                <div class="url-preview" id="urlPreview">
+                    <div class="url-text placeholder" id="urlText">
+                        Your tracked URL will appear here as you fill out the form...
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" id="copyBtn" onclick="copyToClipboard()" disabled>
+                        📋 Copy URL
+                    </button>
+                    <button class="btn btn-secondary" id="testBtn" onclick="testUrl()" disabled>
+                        🔍 Test URL
+                    </button>
+                    <button class="btn btn-success" id="saveBtn" onclick="saveCampaign()" disabled>
+                        💾 Save Campaign
+                    </button>
+                </div>
+
+                <div class="export-options">
+                    <button class="btn btn-secondary" onclick="exportToCSV()" disabled id="csvBtn">
+                        📊 Export CSV
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportToJSON()" disabled id="jsonBtn">
+                        📄 Export JSON
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateQRCode()" disabled id="qrBtn">
+                        📱 Generate QR
+                    </button>
+                    <button class="btn btn-secondary" onclick="shareUrl()" disabled id="shareBtn">
+                        🔗 Share URL
+                    </button>
+                </div>
+
+                <div class="qr-container" style="display: none;" id="qrContainer">
+                    <h3>QR Code</h3>
+                    <div id="qrcode"></div>
+                    <button class="btn btn-primary" onclick="downloadQR()" style="margin-top: 15px;">
+                        ⬇️ Download QR Code
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="analytics-section fade-in">
+            <h2 class="section-title">Campaign Analytics Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCampaigns">0</div>
+                    <div class="stat-label">Total Campaigns</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeCampaigns">0</div>
+                    <div class="stat-label">Active This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="topPerformer">N/A</div>
+                    <div class="stat-label">Top Medium</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="urlsGenerated">0</div>
+                    <div class="stat-label">URLs Generated</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="campaign-history fade-in">
+            <h2 class="section-title">Recent Campaigns</h2>
+            <div id="campaignHistory">
+                <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                    No campaigns saved yet. Create your first campaign above!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let campaigns = JSON.parse(localStorage.getItem('utmCampaigns') || '[]');
+        let urlsGenerated = parseInt(localStorage.getItem('urlsGenerated') || '0');
+        let currentQRCode = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            updateCampaignHistory();
+            setupFormListeners();
+            showWelcomeAnimation();
+        });
+
+        function showWelcomeAnimation() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(20px)';
+                    el.style.transition = 'all 0.6s ease';
+                    setTimeout(() => {
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, 50);
+                }, index * 150);
+            });
+        }
+
+        function setupFormListeners() {
+            const inputs = ['baseUrl', 'campaign', 'source', 'medium', 'content', 'term'];
+            inputs.forEach(id => {
+                const element = document.getElementById(id);
+                element.addEventListener('input', updateUrlPreview);
+                element.addEventListener('change', updateUrlPreview);
+            });
+        }
+
+        function updateUrlPreview() {
+            const baseUrl = document.getElementById('baseUrl').value;
+            const campaign = document.getElementById('campaign').value;
+            const source = document.getElementById('source').value;
+            const medium = document.getElementById('medium').value;
+            const content = document.getElementById('content').value;
+            const term = document.getElementById('term').value;
+
+            const urlPreview = document.getElementById('urlPreview');
+            const urlText = document.getElementById('urlText');
+
+            if (!baseUrl || !campaign || !source || !medium) {
+                urlText.textContent = 'Your tracked URL will appear here as you fill out the form...';
+                urlText.className = 'url-text placeholder';
+                urlPreview.className = 'url-preview';
+                disableButtons();
+                return;
+            }
+
+            // Validate URL format
+            try {
+                new URL(baseUrl);
+            } catch {
+                showValidation('Please enter a valid URL starting with http:// or https://', 'error');
+                disableButtons();
+                return;
+            }
+
+            // Build UTM parameters
+            const params = new URLSearchParams();
+            params.append('utm_campaign', campaign);
+            params.append('utm_source', source);
+            params.append('utm_medium', medium);
+            
+            if (content) params.append('utm_content', content);
+            if (term) params.append('utm_term', term);
+
+            // Construct final URL
+            const separator = baseUrl.includes('?') ? '&' : '?';
+            const finalUrl = baseUrl + separator + params.toString();
+
+            urlText.textContent = finalUrl;
+            urlText.className = 'url-text';
+            urlPreview.className = 'url-preview has-url';
+            
+            enableButtons();
+            hideValidation();
+        }
+
+        function enableButtons() {
+            const buttons = ['copyBtn', 'testBtn', 'saveBtn', 'csvBtn', 'jsonBtn', 'qrBtn', 'shareBtn'];
+            buttons.forEach(id => {
+                document.getElementById(id).disabled = false;
+            });
+        }
+
+        function disableButtons() {
+            const buttons = ['copyBtn', 'testBtn', 'saveBtn', 'csvBtn', 'jsonBtn', 'qrBtn', 'shareBtn'];
+            buttons.forEach(id => {
+                document.getElementById(id).disabled = true;
+            });
+        }
+
+        function showValidation(message, type) {
+            const validationDiv = document.getElementById('validationMessage');
+            validationDiv.textContent = message;
+            validationDiv.className = `validation-message ${type}`;
+            validationDiv.style.display = 'block';
+        }
+
+        function hideValidation() {
+            document.getElementById('validationMessage').style.display = 'none';
+        }
+
+        async function copyToClipboard() {
+            const urlText = document.getElementById('urlText').textContent;
+            const copyBtn = document.getElementById('copyBtn');
+            
+            try {
+                await navigator.clipboard.writeText(urlText);
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.style.background = 'var(--success-green)';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = 'var(--primary-blue)';
+                }, 2000);
+                
+                showValidation('URL copied to clipboard successfully!', 'success');
+            } catch (err) {
+                showValidation('Failed to copy URL. Please try again.', 'error');
+            }
+        }
+
+        function testUrl() {
+            const urlText = document.getElementById('urlText').textContent;
+            const testBtn = document.getElementById('testBtn');
+            
+            testBtn.innerHTML = '<span class="loading"></span> Testing...';
+            testBtn.disabled = true;
+            
+            // Simulate URL test
+            setTimeout(() => {
+                window.open(urlText, '_blank');
+                testBtn.innerHTML = '🔍 Test URL';
+                testBtn.disabled = false;
+                showValidation('URL opened in new tab for testing', 'success');
+            }, 1000);
+        }
+
+        function saveCampaign() {
+            const campaignData = {
+                id: Date.now(),
+                name: document.getElementById('campaign').value,
+                url: document.getElementById('urlText').textContent,
+                source: document.getElementById('source').value,
+                medium: document.getElementById('medium').value,
+                content: document.getElementById('content').value || 'N/A',
+                term: document.getElementById('term').value || 'N/A',
+                created: new Date().toLocaleString(),
+                baseUrl: document.getElementById('baseUrl').value
+            };
+
+            campaigns.unshift(campaignData);
+            localStorage.setItem('utmCampaigns', JSON.stringify(campaigns));
+            
+            urlsGenerated++;
+            localStorage.setItem('urlsGenerated', urlsGenerated.toString());
+            
+            updateStats();
+            updateCampaignHistory();
+            
+            showValidation('Campaign saved successfully!', 'success');
+            
+            // Clear form
+            setTimeout(() => {
+                document.getElementById('utmForm').reset();
+                updateUrlPreview();
+            }, 1500);
+        }
+
+        function generateQRCode() {
+            const urlText = document.getElementById('urlText').textContent;
+            const qrContainer = document.getElementById('qrContainer');
+            const qrCodeDiv = document.getElementById('qrcode');
+            
+            // Clear previous QR code
+            qrCodeDiv.innerHTML = '';
+            
+            // Generate new QR code
+            currentQRCode = new QRCode(qrCodeDiv, {
+                text: urlText,
+                width: 200,
+                height: 200,
+                colorDark: '#0078d4',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            qrContainer.style.display = 'block';
+            qrContainer.scrollIntoView({ behavior: 'smooth' });
+            
+            showValidation('QR Code generated successfully!', 'success');
+        }
+
+        function downloadQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.download = `utm-qr-${document.getElementById('campaign').value || 'campaign'}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+                
+                showValidation('QR Code downloaded successfully!', 'success');
+            }
+        }
+
+        function exportToCSV() {
+            if (campaigns.length === 0) {
+                showValidation('No campaigns to export', 'error');
+                return;
+            }
+
+            const headers = ['Campaign Name', 'URL', 'Source', 'Medium', 'Content', 'Term', 'Created', 'Base URL'];
+            const csvContent = [
+                headers.join(','),
+                ...campaigns.map(c => [
+                    `"${c.name}"`,
+                    `"${c.url}"`,
+                    `"${c.source}"`,
+                    `"${c.medium}"`,
+                    `"${c.content}"`,
+                    `"${c.term}"`,
+                    `"${c.created}"`,
+                    `"${c.baseUrl}"`
+                ].join(','))
+            ].join('\n');
+
+            downloadFile(csvContent, `utm-campaigns-${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
+            showValidation('Campaign data exported to CSV!', 'success');
+        }
+
+        function exportToJSON() {
+            if (campaigns.length === 0) {
+                showValidation('No campaigns to export', 'error');
+                return;
+            }
+
+            const jsonContent = JSON.stringify({
+                exportDate: new Date().toISOString(),
+                totalCampaigns: campaigns.length,
+                campaigns: campaigns
+            }, null, 2);
+
+            downloadFile(jsonContent, `utm-campaigns-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+            showValidation('Campaign data exported to JSON!', 'success');
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        async function shareUrl() {
+            const urlText = document.getElementById('urlText').textContent;
+            const campaignName = document.getElementById('campaign').value;
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: `UTM Campaign: ${campaignName}`,
+                        text: `Check out this tracked campaign URL`,
+                        url: urlText
+                    });
+                    showValidation('URL shared successfully!', 'success');
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        copyToClipboard();
+                    }
+                }
+            } else {
+                // Fallback for browsers without native sharing
+                copyToClipboard();
+            }
+        }
+
+        function loadPreset(type) {
+            const presets = {
+                email: {
+                    source: 'newsletter',
+                    medium: 'email',
+                    content: 'header_cta',
+                    campaign: 'monthly_newsletter'
+                },
+                social: {
+                    source: 'facebook',
+                    medium: 'social',
+                    content: 'post_link',
+                    campaign: 'social_awareness'
+                },
+                ppc: {
+                    source: 'google',
+                    medium: 'cpc',
+                    content: 'ad_variant_a',
+                    term: 'marketing+software',
+                    campaign: 'search_campaign'
+                },
+                content: {
+                    source: 'blog',
+                    medium: 'referral',
+                    content: 'inline_link',
+                    campaign: 'content_marketing'
+                }
+            };
+
+            const preset = presets[type];
+            if (preset) {
+                Object.keys(preset).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        element.value = preset[key];
+                    }
+                });
+                updateUrlPreview();
+                showValidation(`${type.charAt(0).toUpperCase() + type.slice(1)} preset loaded!`, 'success');
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalCampaigns').textContent = campaigns.length;
+            document.getElementById('urlsGenerated').textContent = urlsGenerated;
+            
+            // Calculate active campaigns (created this month)
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            const activeCampaigns = campaigns.filter(c => {
+                const campaignDate = new Date(c.created);
+                return campaignDate.getMonth() === currentMonth && campaignDate.getFullYear() === currentYear;
+            }).length;
+            document.getElementById('activeCampaigns').textContent = activeCampaigns;
+
+            // Find top performing medium
+            const mediumCounts = {};
+            campaigns.forEach(c => {
+                mediumCounts[c.medium] = (mediumCounts[c.medium] || 0) + 1;
+            });
+            
+            const topMedium = Object.keys(mediumCounts).reduce((a, b) => 
+                mediumCounts[a] > mediumCounts[b] ? a : b, 'N/A'
+            );
+            document.getElementById('topPerformer').textContent = topMedium === 'N/A' ? 'N/A' : topMedium.charAt(0).toUpperCase() + topMedium.slice(1);
+        }
+
+        function updateCampaignHistory() {
+            const historyDiv = document.getElementById('campaignHistory');
+            
+            if (campaigns.length === 0) {
+                historyDiv.innerHTML = `
+                    <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                        No campaigns saved yet. Create your first campaign above!
+                    </p>
+                `;
+                return;
+            }
+
+            const recentCampaigns = campaigns.slice(0, 10); // Show last 10 campaigns
+            historyDiv.innerHTML = recentCampaigns.map(campaign => `
+                <div class="history-item">
+                    <div style="display: flex; justify-content: between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <strong style="color: var(--primary-blue);">${campaign.name}</strong>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px;">
+                                ${campaign.source} • ${campaign.medium} • ${campaign.created}
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" 
+                                    onclick="loadCampaign(${campaign.id})">
+                                📝 Load
+                            </button>
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" 
+                                    onclick="copyCampaignUrl('${campaign.url}')">
+                                📋 Copy
+                            </button>
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" 
+                                    onclick="deleteCampaign(${campaign.id})">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 8px; font-family: monospace; font-size: 0.8rem; color: var(--text-secondary); word-break: break-all;">
+                        ${campaign.url}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadCampaign(campaignId) {
+            const campaign = campaigns.find(c => c.id === campaignId);
+            if (campaign) {
+                document.getElementById('baseUrl').value = campaign.baseUrl;
+                document.getElementById('campaign').value = campaign.name;
+                document.getElementById('source').value = campaign.source;
+                document.getElementById('medium').value = campaign.medium;
+                document.getElementById('content').value = campaign.content === 'N/A' ? '' : campaign.content;
+                document.getElementById('term').value = campaign.term === 'N/A' ? '' : campaign.term;
+                
+                updateUrlPreview();
+                showValidation('Campaign loaded successfully!', 'success');
+                
+                // Scroll to form
+                document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        async function copyCampaignUrl(url) {
+            try {
+                await navigator.clipboard.writeText(url);
+                showValidation('Campaign URL copied to clipboard!', 'success');
+            } catch (err) {
+                showValidation('Failed to copy URL. Please try again.', 'error');
+            }
+        }
+
+        function deleteCampaign(campaignId) {
+            if (confirm('Are you sure you want to delete this campaign? This action cannot be undone.')) {
+                campaigns = campaigns.filter(c => c.id !== campaignId);
+                localStorage.setItem('utmCampaigns', JSON.stringify(campaigns));
+                
+                updateStats();
+                updateCampaignHistory();
+                showValidation('Campaign deleted successfully!', 'success');
+            }
+        }
+
+        // Advanced Features
+
+        // URL Shortener simulation (for demo purposes)
+        function shortenUrl() {
+            const urlText = document.getElementById('urlText').textContent;
+            if (urlText && !urlText.includes('Your tracked URL')) {
+                // Simulate URL shortening
+                const shortId = Math.random().toString(36).substring(2, 8);
+                const shortUrl = `https://short.ly/${shortId}`;
+                
+                showValidation(`Shortened URL: ${shortUrl} (Demo only)`, 'success');
+                
+                // In a real implementation, this would call a URL shortening service
+                console.log('Original URL:', urlText);
+                console.log('Shortened URL:', shortUrl);
+            }
+        }
+
+        // Bulk URL generator
+        function generateBulkUrls() {
+            const baseUrl = document.getElementById('baseUrl').value;
+            const campaign = document.getElementById('campaign').value;
+            
+            if (!baseUrl || !campaign) {
+                showValidation('Please fill in base URL and campaign name first', 'error');
+                return;
+            }
+
+            const sources = ['facebook', 'twitter', 'linkedin', 'instagram', 'email', 'google'];
+            const mediums = ['social', 'social', 'social', 'social', 'email', 'cpc'];
+            
+            let bulkUrls = [];
+            
+            sources.forEach((source, index) => {
+                const params = new URLSearchParams();
+                params.append('utm_campaign', campaign);
+                params.append('utm_source', source);
+                params.append('utm_medium', mediums[index]);
+                
+                const separator = baseUrl.includes('?') ? '&' : '?';
+                const finalUrl = baseUrl + separator + params.toString();
+                
+                bulkUrls.push({
+                    source: source,
+                    medium: mediums[index],
+                    url: finalUrl
+                });
+            });
+
+            // Create a simple popup or modal to show bulk URLs
+            const bulkContent = bulkUrls.map(item => 
+                `${item.source} (${item.medium}): ${item.url}`
+            ).join('\n');
+
+            const blob = new Blob([bulkContent], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `bulk-utm-urls-${campaign}.txt`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+            
+            showValidation('Bulk URLs generated and downloaded!', 'success');
+        }
+
+        // URL validation and analytics
+        function validateUrlStructure() {
+            const urlText = document.getElementById('urlText').textContent;
+            
+            if (urlText.includes('Your tracked URL')) {
+                showValidation('Please create a URL first', 'error');
+                return;
+            }
+
+            try {
+                const url = new URL(urlText);
+                const params = url.searchParams;
+                
+                const requiredParams = ['utm_campaign', 'utm_source', 'utm_medium'];
+                const missing = requiredParams.filter(param => !params.has(param));
+                
+                if (missing.length === 0) {
+                    showValidation('✅ URL structure is valid and complete!', 'success');
+                } else {
+                    showValidation(`❌ Missing required parameters: ${missing.join(', ')}`, 'error');
+                }
+                
+                // Additional checks
+                const warnings = [];
+                if (url.searchParams.get('utm_campaign')?.length < 3) {
+                    warnings.push('Campaign name is very short');
+                }
+                
+                if (warnings.length > 0) {
+                    setTimeout(() => {
+                        showValidation(`⚠️ Warnings: ${warnings.join(', ')}`, 'error');
+                    }, 2000);
+                }
+                
+            } catch (err) {
+                showValidation('Invalid URL format', 'error');
+            }
+        }
+
+        // Auto-save feature
+        let autoSaveTimeout;
+        function autoSave() {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                const formData = {
+                    baseUrl: document.getElementById('baseUrl').value,
+                    campaign: document.getElementById('campaign').value,
+                    source: document.getElementById('source').value,
+                    medium: document.getElementById('medium').value,
+                    content: document.getElementById('content').value,
+                    term: document.getElementById('term').value,
+                    timestamp: Date.now()
+                };
+                
+                if (Object.values(formData).some(val => val && val !== '')) {
+                    localStorage.setItem('utmFormDraft', JSON.stringify(formData));
+                    
+                    // Show subtle indication of auto-save
+                    const indicator = document.createElement('div');
+                    indicator.textContent = '💾 Draft saved';
+                    indicator.style.position = 'fixed';
+                    indicator.style.top = '20px';
+                    indicator.style.right = '20px';
+                    indicator.style.background = 'var(--success-green)';
+                    indicator.style.color = 'white';
+                    indicator.style.padding = '8px 16px';
+                    indicator.style.borderRadius = '20px';
+                    indicator.style.fontSize = '0.8rem';
+                    indicator.style.zIndex = '1000';
+                    indicator.style.opacity = '0';
+                    indicator.style.transition = 'opacity 0.3s ease';
+                    
+                    document.body.appendChild(indicator);
+                    setTimeout(() => indicator.style.opacity = '1', 50);
+                    setTimeout(() => {
+                        indicator.style.opacity = '0';
+                        setTimeout(() => document.body.removeChild(indicator), 300);
+                    }, 2000);
+                }
+            }, 2000); // Auto-save after 2 seconds of inactivity
+        }
+
+        // Load draft on page load
+        window.addEventListener('load', () => {
+            const draft = localStorage.getItem('utmFormDraft');
+            if (draft) {
+                const formData = JSON.parse(draft);
+                const now = Date.now();
+                
+                // Only load draft if it's less than 24 hours old
+                if (now - formData.timestamp < 24 * 60 * 60 * 1000) {
+                    if (confirm('Found a saved draft. Would you like to restore it?')) {
+                        document.getElementById('baseUrl').value = formData.baseUrl || '';
+                        document.getElementById('campaign').value = formData.campaign || '';
+                        document.getElementById('source').value = formData.source || '';
+                        document.getElementById('medium').value = formData.medium || '';
+                        document.getElementById('content').value = formData.content || '';
+                        document.getElementById('term').value = formData.term || '';
+                        updateUrlPreview();
+                    }
+                } else {
+                    localStorage.removeItem('utmFormDraft');
+                }
+            }
+        });
+
+        // Add auto-save listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = ['baseUrl', 'campaign', 'source', 'medium', 'content', 'term'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', autoSave);
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + S to save campaign
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                const saveBtn = document.getElementById('saveBtn');
+                if (!saveBtn.disabled) {
+                    saveCampaign();
+                }
+            }
+            
+            // Ctrl/Cmd + C to copy URL when focused on preview
+            if ((e.ctrlKey || e.metaKey) && e.key === 'c' && e.target.closest('.url-preview')) {
+                e.preventDefault();
+                copyToClipboard();
+            }
+            
+            // Escape to clear form
+            if (e.key === 'Escape') {
+                if (confirm('Clear the form? This will lose any unsaved data.')) {
+                    document.getElementById('utmForm').reset();
+                    updateUrlPreview();
+                    localStorage.removeItem('utmFormDraft');
+                }
+            }
+        });
+
+        // Add additional buttons to the actions area
+        document.addEventListener('DOMContentLoaded', () => {
+            const actionsDiv = document.querySelector('.actions');
+            
+            // Add validate button
+            const validateBtn = document.createElement('button');
+            validateBtn.className = 'btn btn-secondary';
+            validateBtn.innerHTML = '🔍 Validate';
+            validateBtn.onclick = validateUrlStructure;
+            validateBtn.disabled = true;
+            validateBtn.id = 'validateBtn';
+            actionsDiv.appendChild(validateBtn);
+            
+            // Add bulk generate button
+            const bulkBtn = document.createElement('button');
+            bulkBtn.className = 'btn btn-secondary';
+            bulkBtn.innerHTML = '📦 Bulk Generate';
+            bulkBtn.onclick = generateBulkUrls;
+            bulkBtn.id = 'bulkBtn';
+            actionsDiv.appendChild(bulkBtn);
+        });
+
+        // Update button states when URL changes
+        const originalUpdateUrlPreview = updateUrlPreview;
+        updateUrlPreview = function() {
+            originalUpdateUrlPreview();
+            
+            const hasValidUrl = !document.getElementById('urlText').textContent.includes('Your tracked URL');
+            const validateBtn = document.getElementById('validateBtn');
+            if (validateBtn) {
+                validateBtn.disabled = !hasValidUrl;
+            }
+        };
+
+        // Performance monitoring
+        let performanceMetrics = {
+            urlsGenerated: 0,
+            averageFormFillTime: 0,
+            totalSessions: parseInt(localStorage.getItem('totalSessions') || '0') + 1
+        };
+
+        localStorage.setItem('totalSessions', performanceMetrics.totalSessions.toString());
+
+        // Form analytics
+        let formStartTime = null;
+        document.getElementById('baseUrl').addEventListener('focus', () => {
+            if (!formStartTime) {
+                formStartTime = Date.now();
+            }
+        });
+
+        // Add session info to footer
+        const sessionInfo = document.createElement('div');
+        sessionInfo.style.textAlign = 'center';
+        sessionInfo.style.padding = '20px';
+        sessionInfo.style.color = 'var(--text-secondary)';
+        sessionInfo.style.fontSize = '0.8rem';
+        sessionInfo.innerHTML = `
+            Session #${performanceMetrics.totalSessions} • 
+            UTM Builder Pro v2.0 • 
+            Built for Marketing Excellence
+        `;
+        document.body.appendChild(sessionInfo);
+
+        console.log('🚀 UTM URL Builder Pro initialized successfully!');
+        console.log('💡 Keyboard shortcuts: Ctrl+S (Save), Ctrl+C (Copy URL), Esc (Clear form)');
+        console.log('📊 Session:', performanceMetrics.totalSessions);
+    </script>
+</body>
+</html>
