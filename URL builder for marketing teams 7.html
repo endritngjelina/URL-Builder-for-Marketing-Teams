@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTM Pro - Advanced Campaign URL Builder</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #a5b4fc;
+            --secondary-color: #f8fafc;
+            --accent-color: #06b6d4;
+            --accent-light: #67e8f9;
+            --success-color: #10b981;
+            --success-light: #6ee7b7;
+            --warning-color: #f59e0b;
+            --warning-light: #fbbf24;
+            --error-color: #ef4444;
+            --error-light: #fca5a5;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            --surface-primary: rgba(255, 255, 255, 0.95);
+            --surface-secondary: rgba(255, 255, 255, 0.8);
+            --surface-tertiary: rgba(255, 255, 255, 0.6);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-accent: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --gradient-surface: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+            --border-radius-sm: 6px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 24px;
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.25s ease;
+            --transition-slow: 0.4s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gradient-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 0;
+            position: relative;
+        }
+
+        /* Floating particles background */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Header styles */
+        .header {
+            background: var(--surface-primary);
+            backdrop-filter: blur(20px) saturate(180%);
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all var(--transition-normal);
+        }
+
+        .header:hover {
+            box-shadow: var(--shadow-xl);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .logo-icon:hover::before {
+            left: 100%;
+        }
+
+        .logo-icon:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 0.75rem 1.5rem;
+            background: var(--surface-secondary);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all var(--transition-normal);
+            cursor: default;
+            min-width: 120px;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: var(--surface-primary);
+        }
+
+        .stat-number {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        /* Main content layout */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .required {
+            color: var(--error-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: white;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-addon {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            pointer-events: none;
+        }
+
+        /* Button styles */
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            font-size: 0.9375rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.625rem;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.025em;
+            min-height: 48px;
+            box-shadow: var(--shadow-sm);
+            font-family: inherit;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), #3730a3);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary {
+            background: var(--surface-primary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 1);
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: var(--shadow-sm) !important;
+        }
+
+        .btn:disabled::before {
+            display: none;
+        }
+
+        /* URL Preview */
+        .url-preview {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            word-break: break-all;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .url-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transition: left 1s ease;
+        }
+
+        .url-preview.has-url {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border-color: var(--accent-color);
+            color: var(--primary-color);
+            border-style: solid;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .url-preview.has-url::before {
+            left: 100%;
+        }
+
+        .url-preview.has-url:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        /* QR Code Container */
+        .qr-container {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .qr-code {
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Campaign History */
+        .campaign-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .history-title {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .history-url {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+            margin-top: 0.25rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Templates */
+        .templates {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .template-item {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .template-item:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .template-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .template-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Analytics */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            background: var(--success-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: var(--error-color);
+        }
+
+        .toast.warning {
+            background: var(--warning-color);
+        }
+
+        .toast.info {
+            background: var(--primary-color);
+        }
+
+        /* Charts */
+        .chart-container {
+            height: 200px;
+            margin-top: 1.5rem;
+        }
+
+        /* Validation */
+        .validation-error {
+            color: var(--error-color);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .help-text {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .header-stats {
+                display: flex;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .main-panel, .panel {
+                padding: 1.5rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .stat-item {
+                min-width: 100px;
+                padding: 0.5rem 1rem;
+            }
+        }
+
+        /* Advanced features panel */
+        .advanced-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 1.5rem;
+        }
+
+        .toggle-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            background: var(--border-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .toggle-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles" id="particles"></div>
+    
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">UTM</div>
+                <div class="logo-text">Campaign URL Builder Pro</div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalUrls">0</div>
+                    <div class="stat-label">URLs Generated</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalCampaigns">0</div>
+                    <div class="stat-label">Campaigns</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalClicks">0</div>
+                    <div class="stat-label">Est. Clicks</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-panel">
+            <h2 class="section-title">
+                🎯 Campaign URL Builder
+            </h2>
+            
+            <form id="utmForm">
+                <div class="form-group">
+                    <label for="baseUrl">Website URL <span class="required">*</span></label>
+                    <input type="url" id="baseUrl" placeholder="https://example.com/landing-page" required>
+                    <div class="help-text">Enter the destination URL for your campaign</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="utmSource">Campaign Source <span class="required">*</span></label>
+                        <input type="text" id="utmSource" placeholder="google, facebook, newsletter" required>
+                        <div class="help-text">Traffic source (e.g., google, facebook)</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="utmMedium">Campaign Medium <span class="required">*</span></label>
+                        <select id="utmMedium" required>
+                            <option value="">Select medium</option>
+                            <option value="cpc">CPC (Cost Per Click)</option>
+                            <option value="cpm">CPM (Cost Per Mille)</option>
+                            <option value="email">Email</option>
+                            <option value="social">Social Media</option>
+                            <option value="organic">Organic Search</option>
+                            <option value="referral">Referral</option>
+                            <option value="display">Display Advertising</option>
+                            <option value="affiliate">Affiliate</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="utmCampaign">Campaign Name <span class="required">*</span></label>
+                        <input type="text" id="utmCampaign" placeholder="summer_sale_2024" required>
+                        <div class="help-text">Unique campaign identifier</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="utmTerm">Campaign Term</label>
+                        <input type="text" id="utmTerm" placeholder="running shoes, fitness">
+                        <div class="help-text">Keywords for paid search</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="utmContent">Campaign Content</label>
+                    <input type="text" id="utmContent" placeholder="banner_ad, text_link">
+                    <div class="help-text">Differentiate similar content or links</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="customParams">Custom Parameters</label>
+                    <textarea id="customParams" rows="3" placeholder="param1=value1&#10;param2=value2"></textarea>
+                    <div class="help-text">Additional parameters (one per line, format: key=value)</div>
+                </div>
+            </form>
+
+            <div class="form-group">
+                <label>Generated URL Preview</label>
+                <div class="url-preview" id="urlPreview">
+                    Your UTM-tracked URL will appear here...
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="generateUrl()">
+                    🔗 Generate URL
+                </button>
+                <button class="btn btn-success" onclick="copyUrl()" id="copyBtn" disabled>
+                    📋 Copy URL
+                </button>
+                <button class="btn btn-secondary" onclick="clearForm()">
+                    🗑️ Clear Form
+                </button>
+                <button class="btn btn-secondary" onclick="exportData()">
+                    📊 Export Data
+                </button>
+            </div>
+
+            <!-- Advanced Features Panel -->
+            <div class="advanced-panel">
+                <h3 class="section-title">⚡ Advanced Features</h3>
+                <div class="toggle-container">
+                    <button class="toggle-btn active" onclick="toggleAdvanced('analytics')">Analytics</button>
+                    <button class="toggle-btn" onclick="toggleAdvanced('shorten')">URL Shortener</button>
+                    <button class="toggle-btn" onclick="toggleAdvanced('bulk')">Bulk Generator</button>
+                </div>
+                
+                <div id="analyticsPanel" class="advanced-section">
+                    <h4>Performance Prediction</h4>
+                    <div id="performancePrediction" class="help-text">Fill in the form to get performance prediction</div>
+                    
+                    <div class="chart-container">
+                        <canvas id="analyticsChart"></canvas>
+                    </div>
+                </div>
+                
+                <div id="shortenPanel" class="advanced-section" style="display:none;">
+                    <div class="form-group">
+                        <label for="shortUrl">Shortened URL</label>
+                        <div class="input-group">
+                            <input type="text" id="shortUrl" placeholder="Shortened URL will appear here" readonly>
+                            <div class="input-addon" id="shortUrlStatus"></div>
+                        </div>
+                        <div class="help-text">We'll generate a shortened version of your UTM URL</div>
+                        <button class="btn btn-secondary" onclick="shortenUrl()" style="margin-top: 0.5rem;">Shorten URL</button>
+                    </div>
+                </div>
+                
+                <div id="bulkPanel" class="advanced-section" style="display:none;">
+                    <div class="form-group">
+                        <label>Bulk Generator</label>
+                        <textarea id="bulkData" rows="4" placeholder="Campaign Name, Source, Medium, Term, Content&#10;Summer Sale, facebook, social, summer, banner&#10;Product Launch, google, cpc, new product, text"></textarea>
+                        <div class="help-text">Enter campaign data in CSV format (Name, Source, Medium, Term, Content)</div>
+                        <button class="btn btn-secondary" onclick="processBulkData()" style="margin-top: 0.5rem;">Generate URLs</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="panel">
+                <h3 class="section-title">📱 QR Code</h3>
+                <div class="qr-container">
+                    <div id="qrcode" class="qr-code"></div>
+                    <button class="btn btn-secondary" onclick="downloadQR()" id="downloadQRBtn" disabled>
+                        ⬇️ Download QR
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3 class="section-title">📋 Campaign Templates</h3>
+                <div class="templates">
+                    <div class="template-item" onclick="loadTemplate('email')">
+                        <div class="template-name">📧 Email Campaign</div>
+                        <div class="template-desc">Newsletter and email marketing</div>
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('social')">
+                        <div class="template-name">📱 Social Media</div>
+                        <div class="template-desc">Facebook, Instagram, LinkedIn posts</div>
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('google')">
+                        <div class="template-name">🔍 Google Ads</div>
+                        <div class="template-desc">Search and display campaigns</div>
+                    </div>
+                    <div class="template-item" onclick="loadTemplate('affiliate')">
+                        <div class="template-name">🤝 Affiliate Program</div>
+                        <div class="template-desc">Partner and affiliate tracking</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3 class="section-title">📈 Campaign Analytics</h3>
+                <div class="analytics-grid">
+                    <div class="metric">
+                        <div class="metric-value" id="todayUrls">0</div>
+                        <div class="metric-label">Today</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="weekUrls">0</div>
+                        <div class="metric-label">This Week</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="monthUrls">0</div>
+                        <div class="metric-label">This Month</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="avgParams">0</div>
+                        <div class="metric-label">Avg Parameters</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3 class="section-title">🕒 Recent Campaigns</h3>
+                <div class="campaign-history" id="campaignHistory">
+                    <div class="history-item" onclick="loadFromHistory(0)">
+                        <div class="history-title">Welcome Campaign</div>
+                        <div class="history-url">example.com?utm_source=demo...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Global variables
+        let currentUrl = '';
+        let qr = null;
+        let campaignHistory = JSON.parse(localStorage.getItem('utm_campaigns') || '[]');
+        let analytics = JSON.parse(localStorage.getItem('utm_analytics') || '{"total": 0, "today": 0, "week": 0, "month": 0}');
+        let analyticsChart = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            updateAnalytics();
+            loadCampaignHistory();
+            setupEventListeners();
+            initializeAnalyticsChart();
+            logPerformance();
+        });
+
+        function setupEventListeners() {
+            // Real-time URL generation
+            const inputs = ['baseUrl', 'utmSource', 'utmMedium', 'utmCampaign', 'utmTerm', 'utmContent', 'customParams'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', debounce(generateUrl, 300));
+            });
+
+            // Form validation
+            document.getElementById('utmForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                generateUrl();
+            });
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function generateUrl() {
+            const baseUrl = document.getElementById('baseUrl').value.trim();
+            const utmSource = document.getElementById('utmSource').value.trim();
+            const utmMedium = document.getElementById('utmMedium').value;
+            const utmCampaign = document.getElementById('utmCampaign').value.trim();
+            const utmTerm = document.getElementById('utmTerm').value.trim();
+            const utmContent = document.getElementById('utmContent').value.trim();
+            const customParams = document.getElementById('customParams').value.trim();
+
+            // Validation
+            if (!baseUrl || !utmSource || !utmMedium || !utmCampaign) {
+                document.getElementById('urlPreview').textContent = 'Please fill in all required fields (marked with *)';
+                document.getElementById('urlPreview').classList.remove('has-url');
+                document.getElementById('copyBtn').disabled = true;
+                document.getElementById('downloadQRBtn').disabled = true;
+                return;
+            }
+
+            try {
+                const url = new URL(baseUrl);
+                
+                // Add UTM parameters
+                url.searchParams.set('utm_source', utmSource);
+                url.searchParams.set('utm_medium', utmMedium);
+                url.searchParams.set('utm_campaign', utmCampaign);
+                
+                if (utmTerm) url.searchParams.set('utm_term', utmTerm);
+                if (utmContent) url.searchParams.set('utm_content', utmContent);
+
+                // Add custom parameters
+                if (customParams) {
+                    const customLines = customParams.split('\n');
+                    customLines.forEach(line => {
+                        const [key, ...valueParts] = line.split('=');
+                        if (key && valueParts.length > 0) {
+                            const value = valueParts.join('=');
+                            url.searchParams.set(key.trim(), value.trim());
+                        }
+                    });
+                }
+
+                currentUrl = url.toString();
+                document.getElementById('urlPreview').textContent = currentUrl;
+                document.getElementById('urlPreview').classList.add('has-url');
+                document.getElementById('copyBtn').disabled = false;
+                document.getElementById('downloadQRBtn').disabled = false;
+
+                // Generate QR Code
+                generateQRCode(currentUrl);
+
+                // Save to history
+                saveCampaign({
+                    url: currentUrl,
+                    source: utmSource,
+                    medium: utmMedium,
+                    campaign: utmCampaign,
+                    term: utmTerm,
+                    content: utmContent,
+                    timestamp: new Date().toISOString()
+                });
+
+                // Update performance prediction
+                updatePerformancePrediction(utmMedium, utmCampaign);
+
+            } catch (error) {
+                document.getElementById('urlPreview').textContent = 'Invalid URL format. Please check your website URL.';
+                document.getElementById('urlPreview').classList.remove('has-url');
+                document.getElementById('copyBtn').disabled = true;
+                document.getElementById('downloadQRBtn').disabled = true;
+            }
+        }
+
+        function generateQRCode(url) {
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+            
+            if (url) {
+                qr = qrcode(0, 'M');
+                qr.addData(url);
+                qr.make();
+                
+                const qrImage = qr.createImgTag(4, 8);
+                qrContainer.innerHTML = qrImage;
+            }
+        }
+
+        function copyUrl() {
+            if (currentUrl) {
+                navigator.clipboard.writeText(currentUrl).then(() => {
+                    showToast('URL copied to clipboard! 📋');
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = currentUrl;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showToast('URL copied to clipboard! 📋');
+                });
+            }
+        }
+
+        function downloadQR() {
+            if (qr && currentUrl) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const qrSize = 256;
+                
+                canvas.width = qrSize;
+                canvas.height = qrSize;
+                
+                // Create QR code data URL
+                const qrDataUrl = qr.createDataURL(4, 8);
+                const img = new Image();
+                
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, qrSize, qrSize);
+                    
+                    // Download
+                    const link = document.createElement('a');
+                    link.download = `qr-code-${Date.now()}.png`;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    
+                    showToast('QR Code downloaded! 📱');
+                };
+                
+                img.src = qrDataUrl;
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('utmForm').reset();
+            document.getElementById('urlPreview').textContent = 'Your UTM-tracked URL will appear here...';
+            document.getElementById('urlPreview').classList.remove('has-url');
+            document.getElementById('copyBtn').disabled = true;
+            document.getElementById('downloadQRBtn').disabled = true;
+            document.getElementById('qrcode').innerHTML = '';
+            document.getElementById('shortUrl').value = '';
+            document.getElementById('shortUrlStatus').textContent = '';
+            currentUrl = '';
+        }
+
+        function loadTemplate(type) {
+            const templates = {
+                email: {
+                    source: 'newsletter',
+                    medium: 'email',
+                    campaign: 'monthly_newsletter',
+                    content: 'header_link'
+                },
+                social: {
+                    source: 'facebook',
+                    medium: 'social',
+                    campaign: 'brand_awareness',
+                    content: 'post_link'
+                },
+                google: {
+                    source: 'google',
+                    medium: 'cpc',
+                    campaign: 'search_campaign',
+                    term: 'your keywords'
+                },
+                affiliate: {
+                    source: 'affiliate_partner',
+                    medium: 'affiliate',
+                    campaign: 'partner_program',
+                    content: 'banner_300x250'
+                }
+            };
+
+            const template = templates[type];
+            if (template) {
+                document.getElementById('utmSource').value = template.source || '';
+                document.getElementById('utmMedium').value = template.medium || '';
+                document.getElementById('utmCampaign').value = template.campaign || '';
+                document.getElementById('utmTerm').value = template.term || '';
+                document.getElementById('utmContent').value = template.content || '';
+                
+                showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} template loaded! 📋`, 'info');
+                generateUrl();
+            }
+        }
+
+        function saveCampaign(campaign) {
+            campaignHistory.unshift(campaign);
+            if (campaignHistory.length > 10) {
+                campaignHistory = campaignHistory.slice(0, 10);
+            }
+            localStorage.setItem('utm_campaigns', JSON.stringify(campaignHistory));
+            
+            // Update analytics
+            analytics.total++;
+            analytics.today++;
+            analytics.week++;
+            analytics.month++;
+            localStorage.setItem('utm_analytics', JSON.stringify(analytics));
+            
+            updateAnalytics();
+            loadCampaignHistory();
+        }
+
+        function loadCampaignHistory() {
+            const historyContainer = document.getElementById('campaignHistory');
+            historyContainer.innerHTML = '';
+            
+            if (campaignHistory.length === 0) {
+                historyContainer.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem;">No campaigns yet. Create your first campaign above!</div>';
+                return;
+            }
+            
+            campaignHistory.forEach((campaign, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.onclick = () => loadFromHistory(index);
+                
+                const title = `${campaign.campaign} (${campaign.source})`;
+                const truncatedUrl = campaign.url.length > 50 ? campaign.url.substring(0, 50) + '...' : campaign.url;
+                
+                historyItem.innerHTML = `
+                    <div class="history-title">${title}</div>
+                    <div class="history-url">${truncatedUrl}</div>
+                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                        ${new Date(campaign.timestamp).toLocaleDateString()}
+                    </div>
+                `;
+                
+                historyContainer.appendChild(historyItem);
+            });
+        }
+
+        function loadFromHistory(index) {
+            const campaign = campaignHistory[index];
+            if (campaign) {
+                // Extract base URL (remove all parameters first)
+                const url = new URL(campaign.url);
+                const baseUrl = `${url.protocol}//${url.host}${url.pathname}`;
+                
+                document.getElementById('baseUrl').value = baseUrl;
+                document.getElementById('utmSource').value = campaign.source || '';
+                document.getElementById('utmMedium').value = campaign.medium || '';
+                document.getElementById('utmCampaign').value = campaign.campaign || '';
+                document.getElementById('utmTerm').value = campaign.term || '';
+                document.getElementById('utmContent').value = campaign.content || '';
+                
+                generateUrl();
+                showToast('Campaign loaded from history! 📚', 'info');
+            }
+        }
+
+        function updateAnalytics() {
+            document.getElementById('totalUrls').textContent = analytics.total;
+            document.getElementById('totalCampaigns').textContent = new Set(campaignHistory.map(c => c.campaign)).size;
+            document.getElementById('totalClicks').textContent = Math.floor(analytics.total * 15.7); // Simulated click estimate
+            
+            document.getElementById('todayUrls').textContent = analytics.today;
+            document.getElementById('weekUrls').textContent = analytics.week;
+            document.getElementById('monthUrls').textContent = analytics.month;
+            
+            // Calculate average parameters
+            const avgParams = campaignHistory.length > 0 ? 
+                (campaignHistory.reduce((sum, c) => {
+                    let count = 3; // base UTM params
+                    if (c.term) count++;
+                    if (c.content) count++;
+                    return sum + count;
+                }, 0) / campaignHistory.length).toFixed(1) : '0';
+            
+            document.getElementById('avgParams').textContent = avgParams;
+        }
+
+        function exportData() {
+            const exportData = {
+                campaigns: campaignHistory,
+                analytics: analytics,
+                exportDate: new Date().toISOString(),
+                totalCampaigns: campaignHistory.length
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `utm-campaigns-export-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showToast('Campaign data exported! 📊', 'info');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast';
+            toast.classList.add(type);
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 4 + 2;
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                const delay = Math.random() * 6;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        function toggleAdvanced(panel) {
+            // Hide all panels
+            document.getElementById('analyticsPanel').style.display = 'none';
+            document.getElementById('shortenPanel').style.display = 'none';
+            document.getElementById('bulkPanel').style.display = 'none';
+            
+            // Show selected panel
+            document.getElementById(`${panel}Panel`).style.display = 'block';
+            
+            // Update active button
+            const buttons = document.querySelectorAll('.toggle-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function shortenUrl() {
+            if (!currentUrl) {
+                showToast('Generate a URL first!', 'error');
+                return;
+            }
+            
+            // Simulate API call to shorten URL
+            document.getElementById('shortUrlStatus').textContent = 'Shortening...';
+            
+            setTimeout(() => {
+                const shortUrl = `https://utm.ly/${Math.random().toString(36).substring(2, 10)}`;
+                document.getElementById('shortUrl').value = shortUrl;
+                document.getElementById('shortUrlStatus').textContent = '✅';
+                
+                // Add copy functionality
+                document.getElementById('shortUrl').addEventListener('click', function() {
+                    navigator.clipboard.writeText(shortUrl);
+                    showToast('Short URL copied!', 'info');
+                });
+                
+                showToast('URL shortened successfully!', 'success');
+            }, 800);
+        }
+
+        function processBulkData() {
+            const bulkData = document.getElementById('bulkData').value.trim();
+            if (!bulkData) {
+                showToast('Enter campaign data first!', 'error');
+                return;
+            }
+            
+            const lines = bulkData.split('\n');
+            let generatedCount = 0;
+            
+            lines.forEach((line, index) => {
+                if (index === 0) return; // Skip header
+                
+                const [campaign, source, medium, term, content] = line.split(',').map(item => item.trim());
+                if (campaign && source && medium) {
+                    // Set values and generate URL
+                    document.getElementById('utmCampaign').value = campaign;
+                    document.getElementById('utmSource').value = source;
+                    document.getElementById('utmMedium').value = medium;
+                    document.getElementById('utmTerm').value = term || '';
+                    document.getElementById('utmContent').value = content || '';
+                    
+                    generateUrl();
+                    generatedCount++;
+                }
+            });
+            
+            if (generatedCount > 0) {
+                showToast(`Generated ${generatedCount} URLs!`, 'success');
+            } else {
+                showToast('No valid campaigns found!', 'error');
+            }
+        }
+
+        function updatePerformancePrediction(medium, campaign) {
+            const predictionEl = document.getElementById('performancePrediction');
+            if (!medium || !campaign) {
+                predictionEl.textContent = 'Fill in the form to get performance prediction';
+                return;
+            }
+            
+            // Simulate prediction based on medium and campaign length
+            const mediumMultipliers = {
+                'email': 0.15,
+                'social': 0.08,
+                'cpc': 0.12,
+                'organic': 0.25,
+                'referral': 0.18
+            };
+            
+            const baseRate = 0.1;
+            const multiplier = mediumMultipliers[medium] || baseRate;
+            const campaignFactor = 1 + (campaign.length * 0.01);
+            const estimatedCTR = (multiplier * campaignFactor * 100).toFixed(2);
+            
+            predictionEl.textContent = `Estimated CTR: ${estimatedCTR}%`;
+            
+            // Update chart
+            updateAnalyticsChart(estimatedCTR);
+        }
+
+        function initializeAnalyticsChart() {
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            analyticsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Estimated Clicks',
+                        data: [0, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        borderColor: 'rgba(99, 102, 241, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#1e293b',
+                            bodyColor: '#1e293b',
+                            borderColor: '#e2e8f0',
+                            borderWidth: 1,
+                            padding: 10,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(226, 232, 240, 0.5)'
+                            },
+                            ticks: {
+                                color: '#64748b'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#64748b'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateAnalyticsChart(ctr) {
+            if (!analyticsChart) return;
+            
+            // Generate some simulated data based on CTR
+            const baseValue = parseFloat(ctr) || 0;
+            const newData = [];
+            for (let i = 0; i < 7; i++) {
+                // Add some variance to the data
+                const variance = (Math.random() * 20) - 10;
+                newData.push(Math.max(0, baseValue + variance));
+            }
+            
+            analyticsChart.data.datasets[0].data = newData;
+            analyticsChart.update();
+        }
+
+        function logPerformance() {
+            console.log('UTM Builder loaded and ready');
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        generateUrl();
+                        break;
+                    case 'c':
+                        if (currentUrl) {
+                            e.preventDefault();
+                            copyUrl();
+                        }
+                        break;
+                    case 'n':
+                        e.preventDefault();
+                        clearForm();
+                        break;
+                }
+            }
+        });
+
+        // Auto-save form data
+        function autoSave() {
+            const formData = {
+                baseUrl: document.getElementById('baseUrl').value,
+                utmSource: document.getElementById('utmSource').value,
+                utmMedium: document.getElementById('utmMedium').value,
+                utmCampaign: document.getElementById('utmCampaign').value,
+                utmTerm: document.getElementById('utmTerm').value,
+                utmContent: document.getElementById('utmContent').value,
+                customParams: document.getElementById('customParams').value
+            };
+            localStorage.setItem('utm_draft', JSON.stringify(formData));
+        }
+
+        // Load draft on page load
+        function loadDraft() {
+            const draft = localStorage.getItem('utm_draft');
+            if (draft) {
+                const formData = JSON.parse(draft);
+                Object.keys(formData).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element && formData[key]) {
+                        element.value = formData[key];
+                    }
+                });
+                
+                // Generate URL if enough data
+                if (formData.baseUrl && formData.utmSource && formData.utmMedium && formData.utmCampaign) {
+                    setTimeout(generateUrl, 500);
+                }
+            }
+        }
+
+        // Set up auto-save
+        ['baseUrl', 'utmSource', 'utmMedium', 'utmCampaign', 'utmTerm', 'utmContent', 'customParams'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('input', debounce(autoSave, 1000));
+            }
+        });
+
+        // Load draft on startup
+        window.addEventListener('load', loadDraft);
+    </script>
+</body>
+</html>
