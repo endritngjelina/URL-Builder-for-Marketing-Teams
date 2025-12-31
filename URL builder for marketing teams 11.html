@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTM Builder Pro - Marketing URL Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF0000;
+            --primary-dark: #CC0000;
+            --primary-light: rgba(255, 0, 0, 0.1);
+            --secondary: #1473E6;
+            --secondary-light: rgba(20, 115, 230, 0.1);
+            --background: #0a0a0a;
+            --surface: #1a1a1a;
+            --surface-elevated: #242424;
+            --surface-hover: #2a2a2a;
+            --surface-active: #353535;
+            --text: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #808080;
+            --border: #333333;
+            --border-hover: #555555;
+            --border-focus: #666666;
+            --success: #00d4aa;
+            --success-light: rgba(0, 212, 170, 0.1);
+            --warning: #ffb000;
+            --warning-light: rgba(255, 176, 0, 0.1);
+            --error: #ff4757;
+            --error-light: rgba(255, 71, 87, 0.1);
+            --gradient: linear-gradient(135deg, #FF0000 0%, #1473E6 100%);
+            --gradient-subtle: linear-gradient(135deg, rgba(255, 0, 0, 0.1) 0%, rgba(20, 115, 230, 0.1) 100%);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-strong: rgba(255, 255, 255, 0.1);
+            --blur: blur(20px);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
+            --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.45);
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.25s ease;
+            --transition-slow: 0.35s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(255, 0, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(20, 115, 230, 0.05) 0%, transparent 50%);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            background: var(--gradient);
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.15; }
+            50% { transform: translateX(-50%) scale(1.1); opacity: 0.25; }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            letter-spacing: -0.05em;
+            position: relative;
+            line-height: 1.1;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+            opacity: 0.6;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-weight: 400;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .form-section {
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-normal);
+        }
+
+        .form-section:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px);
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: var(--border-radius-xl) var(--border-radius-xl) 0 0;
+        }
+
+        .form-section::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-subtle);
+            border-radius: 50%;
+            opacity: 0.3;
+            z-index: -1;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .preview-section {
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-xl);
+            padding: 2rem;
+            position: sticky;
+            top: 2rem;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-normal);
+        }
+
+        .preview-section:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
+            transition: color var(--transition-fast);
+        }
+
+        .required {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius-md);
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all var(--transition-normal);
+            position: relative;
+            box-shadow: var(--shadow-sm);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface-elevated);
+            box-shadow: 
+                0 0 0 3px var(--primary-light),
+                var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        input:hover, select:hover {
+            border-color: var(--border-hover);
+            background: var(--surface-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        input::placeholder {
+            color: var(--text-muted);
+            opacity: 1;
+            transition: opacity var(--transition-fast);
+        }
+
+        input:focus::placeholder {
+            opacity: 0.7;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+            font-size: 1.1rem;
+            transition: all var(--transition-fast);
+        }
+
+        .input-group:focus-within .input-icon {
+            color: var(--primary);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .preset-btn {
+            padding: 0.6rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-xl);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .preset-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-subtle);
+            transition: left var(--transition-normal);
+            z-index: -1;
+        }
+
+        .preset-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--primary);
+            color: var(--text);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+
+        .preset-btn:hover::before {
+            left: 0;
+        }
+
+        .preset-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .url-preview {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            word-break: break-all;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            position: relative;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+            overflow: hidden;
+        }
+
+        .url-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+
+        .url-preview:not(.empty)::before {
+            opacity: 1;
+        }
+
+        .url-preview:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        .url-preview.empty {
+            color: var(--text-muted);
+            font-style: italic;
+            font-family: inherit;
+            justify-content: center;
+            text-align: center;
+            background: var(--glass);
+            border-style: dashed;
+        }
+
+        .url-preview:not(.empty) {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--surface-elevated) 100%);
+            color: var(--text);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+            filter: brightness(1.1) saturate(1.2);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-hover);
+            border-color: var(--border-hover);
+            color: var(--text);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn:disabled:hover {
+            box-shadow: var(--shadow-sm);
+        }
+
+        .qr-container {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--glass-strong);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--border);
+            transition: all var(--transition-normal);
+        }
+
+        .qr-container:hover {
+            background: var(--glass);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        #qrcode {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-md);
+            display: inline-block;
+            margin: 1rem 0;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-normal);
+        }
+
+        #qrcode:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .url-history {
+            margin-top: 2rem;
+        }
+
+        .history-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-md);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .history-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--gradient);
+            transform: scaleY(0);
+            transition: transform var(--transition-normal);
+        }
+
+        .history-item:hover {
+            background: var(--surface-hover);
+            border-color: var(--border-hover);
+            transform: translateX(8px) translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .history-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .history-item:active {
+            transform: translateX(4px) translateY(0);
+        }
+
+        .history-url {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            word-break: break-all;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .history-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .history-meta .campaign-info {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .history-meta .campaign-tag {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+            /*display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }*/
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--surface-elevated) 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-md);
+            padding: 1.25rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transition: transform var(--transition-normal);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-md);
+            border-color: var(--border-hover);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--glass-strong);
+            backdrop-filter: var(--blur);
+            color: white;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-xl);
+            transform: translateX(400px);
+            transition: all var(--transition-normal);
+            z-index: 1000;
+            border: 1px solid var(--border);
+            min-width: 280px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, var(--success) 0%, rgba(0, 212, 170, 0.9) 100%);
+            border-color: var(--success);
+        }
+
+        .notification.warning {
+            background: linear-gradient(135deg, var(--warning) 0%, rgba(255, 176, 0, 0.9) 100%);
+            border-color: var(--warning);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, var(--error) 0%, rgba(255, 71, 87, 0.9) 100%);
+            border-color: var(--error);
+        }
+
+        .notification::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background: currentColor;
+            border-radius: 50%;
+            flex-shrink: 0;
+            opacity: 0.3;
+        }
+
+        .bulk-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            position: relative;
+        }
+
+        .bulk-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 1px;
+            background: var(--gradient);
+        }
+
+        .bulk-textarea {
+            width: 100%;
+            min-height: 140px;
+            padding: 1rem;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius-md);
+            color: var(--text);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+            line-height: 1.5;
+        }
+
+        .bulk-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface-elevated);
+            box-shadow: 
+                0 0 0 3px var(--primary-light),
+                var(--shadow-md);
+        }
+
+        .bulk-textarea:hover {
+            border-color: var(--border-hover);
+            background: var(--surface-hover);
+        }
+
+        .bulk-textarea::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .preview-section {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .form-section, .preview-section {
+                padding: 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .template-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .export-options {
+                grid-template-columns: 1fr;
+            }
+
+            .notification {
+                right: 1rem;
+                left: 1rem;
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.75rem;
+            }
+
+            .form-section, .preview-section {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.1;
+            filter: blur(1px);
+        }
+
+        .particle:nth-child(odd) {
+            background: var(--secondary);
+        }
+
+        .particle:nth-child(3n) {
+            width: 6px;
+            height: 6px;
+        }
+
+        .particle:nth-child(3n+1) {
+            width: 4px;
+            height: 4px;
+        }
+
+        .particle:nth-child(3n+2) {
+            width: 2px;
+            height: 2px;
+        }
+
+        /* Loading states */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        /* Focus states */
+        .form-group:focus-within label {
+            color: var(--primary);
+        }
+
+        /* Scroll animations */
+        @media (prefers-reduced-motion: no-preference) {
+            .container > * {
+                animation: fadeInUp 0.6s ease-out;
+                animation-fill-mode: both;
+            }
+
+            .header { animation-delay: 0.1s; }
+            .template-selector { animation-delay: 0.2s; }
+            .main-grid { animation-delay: 0.3s; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--surface);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-hover);
+        }
+
+        /* Selection styles */
+        ::selection {
+            background: var(--primary-light);
+            color: var(--text);
+        }
+
+        .advanced-options {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 5px 0;
+            margin-bottom: 15px;
+        }
+
+        .toggle-btn:hover {
+            text-decoration: underline;
+        }
+
+        .advanced-content {
+            display: none;
+        }
+
+        .advanced-content.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .url-shortener {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .template-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .template-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius-md);
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .template-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transition: transform var(--transition-normal);
+        }
+
+        .template-card:hover {
+            border-color: var(--border-hover);
+            background: var(--surface-hover);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+
+        .template-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .template-card.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--surface-elevated) 100%);
+            box-shadow: var(--shadow-md);
+        }
+
+        .template-card.active::before {
+            transform: scaleX(1);
+        }
+
+        .template-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .template-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .template-card.active .template-name {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>UTM Builder Pro</h1>
+            <p class="subtitle">Professional URL tracking for marketing campaigns with advanced analytics and team collaboration</p>
+        </header>
+
+        <div class="template-selector">
+            <div class="template-card active" data-template="custom">
+                <div class="template-name">Custom Campaign</div>
+                <div class="template-desc">Build from scratch</div>
+            </div>
+            <div class="template-card" data-template="email">
+                <div class="template-name">Email Marketing</div>
+                <div class="template-desc">Newsletter campaigns</div>
+            </div>
+            <div class="template-card" data-template="social">
+                <div class="template-name">Social Media</div>
+                <div class="template-desc">Facebook, Twitter, LinkedIn</div>
+            </div>
+            <div class="template-card" data-template="ppc">
+                <div class="template-name">Paid Advertising</div>
+                <div class="template-desc">Google Ads, Facebook Ads</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="form-section">
+                <h2 style="margin-bottom: 25px; font-size: 1.5rem;">Campaign Details</h2>
+                
+                <div class="form-group">
+                    <label for="baseUrl">Website URL <span class="required">*</span></label>
+                    <div class="input-group">
+                        <input type="url" id="baseUrl" placeholder="https://yourwebsite.com/page" required>
+                        <span class="input-icon">🌐</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="campaign">Campaign Name <span class="required">*</span></label>
+                    <div class="input-group">
+                        <input type="text" id="campaign" placeholder="summer_sale_2024" required>
+                        <span class="input-icon">🎯</span>
+                    </div>
+                    <div class="preset-buttons" id="campaignPresets"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="source">Traffic Source <span class="required">*</span></label>
+                    <div class="input-group">
+                        <input type="text" id="source" placeholder="google, facebook, newsletter" required>
+                        <span class="input-icon">📊</span>
+                    </div>
+                    <div class="preset-buttons" id="sourcePresets"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="medium">Marketing Medium <span class="required">*</span></label>
+                    <div class="input-group">
+                        <input type="text" id="medium" placeholder="cpc, email, social" required>
+                        <span class="input-icon">📱</span>
+                    </div>
+                    <div class="preset-buttons" id="mediumPresets"></div>
+                </div>
+
+                <div class="advanced-options">
+                    <button class="toggle-btn" onclick="toggleAdvanced()">⚙️ Advanced Options</button>
+                    <div class="advanced-content" id="advancedContent">
+                        <div class="form-group">
+                            <label for="term">Keyword/Term</label>
+                            <input type="text" id="term" placeholder="running shoes, summer sale">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="content">Ad Content</label>
+                            <input type="text" id="content" placeholder="banner_ad, text_link">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customParam">Custom Parameter</label>
+                            <input type="text" id="customParam" placeholder="custom_value">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bulk-section">
+                    <h3 style="margin-bottom: 15px;">Bulk URL Generation</h3>
+                    <textarea class="bulk-textarea" id="bulkUrls" placeholder="Paste multiple base URLs (one per line) to generate UTM URLs in bulk..."></textarea>
+                    <button class="btn btn-secondary" onclick="generateBulkUrls()" style="margin-top: 10px; width: 100%;">Generate Bulk URLs</button>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <h2 style="margin-bottom: 20px; font-size: 1.5rem;">Live Preview</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="urlCount">0</span>
+                        <span class="stat-label">URLs Created</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="campaignCount">0</span>
+                        <span class="stat-label">Campaigns</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="urlLength">0</span>
+                        <span class="stat-label">Characters</span>
+                    </div>
+                </div>
+
+                <div class="url-preview" id="urlPreview">
+                    Enter your campaign details to see the UTM URL preview
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyUrl()">📋 Copy URL</button>
+                    <button class="btn btn-secondary" onclick="shareUrl()">📤 Share</button>
+                </div>
+
+                <div class="qr-container">
+                    <h3 style="margin-bottom: 15px;">QR Code</h3>
+                    <div id="qrcode"></div>
+                    <button class="btn btn-secondary" onclick="downloadQR()" style="margin-top: 10px;">Download QR</button>
+                </div>
+
+                <div class="export-options">
+                    <button class="btn btn-secondary" onclick="exportCSV()">📊 Export CSV</button>
+                    <button class="btn btn-secondary" onclick="exportJSON()">📄 Export JSON</button>
+                    <button class="btn btn-secondary" onclick="exportPDF()">📑 Export PDF</button>
+                </div>
+
+                <div class="url-history">
+                    <h3 style="margin-bottom: 15px;">Recent URLs</h3>
+                    <div id="historyContainer"></div>
+                    <button class="btn btn-secondary" onclick="clearHistory()" style="width: 100%; margin-top: 10px;">Clear History</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Global state management
+        let urlHistory = JSON.parse(localStorage.getItem('utmHistory') || '[]');
+        let currentQR = null;
+        let stats = JSON.parse(localStorage.getItem('utmStats') || '{"urlCount": 0, "campaignCount": 0}');
+
+        // Template configurations
+        const templates = {
+            custom: {
+                campaign: '',
+                source: '',
+                medium: ''
+            },
+            email: {
+                campaign: 'newsletter',
+                source: 'email',
+                medium: 'email'
+            },
+            social: {
+                campaign: 'social_campaign',
+                source: 'facebook',
+                medium: 'social'
+            },
+            ppc: {
+                campaign: 'paid_ads',
+                source: 'google',
+                medium: 'cpc'
+            }
+        };
+
+        // Preset options for quick selection
+        const presets = {
+            campaign: ['spring_sale', 'black_friday', 'new_product_launch', 'webinar_promo', 'holiday_campaign'],
+            source: ['google', 'facebook', 'twitter', 'linkedin', 'instagram', 'email', 'direct', 'referral'],
+            medium: ['cpc', 'email', 'social', 'organic', 'referral', 'display', 'affiliate', 'video']
+        };
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            createFloatingParticles();
+            loadHistory();
+            updateStats();
+        });
+
+        function initializeApp() {
+            // Create preset buttons
+            createPresetButtons();
+            
+            // Add event listeners
+            document.querySelectorAll('input, select').forEach(input => {
+                input.addEventListener('input', updatePreview);
+            });
+
+            // Template selector event listeners
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    selectTemplate(this.dataset.template);
+                });
+            });
+
+            // Initial preview update
+            updatePreview();
+        }
+
+        function createPresetButtons() {
+            Object.keys(presets).forEach(type => {
+                const container = document.getElementById(type + 'Presets');
+                presets[type].forEach(preset => {
+                    const button = document.createElement('button');
+                    button.className = 'preset-btn';
+                    button.textContent = preset;
+                    button.onclick = () => {
+                        document.getElementById(type).value = preset;
+                        updatePreview();
+                        animateButton(button);
+                    };
+                    container.appendChild(button);
+                });
+            });
+        }
+
+        function selectTemplate(templateType) {
+            // Update active template
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`[data-template="${templateType}"]`).classList.add('active');
+
+            // Apply template values
+            const template = templates[templateType];
+            Object.keys(template).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = template[key];
+                }
+            });
+
+            updatePreview();
+            showNotification(`Applied ${templateType} template`);
+        }
+
+        function updatePreview() {
+            const baseUrl = document.getElementById('baseUrl').value;
+            const campaign = document.getElementById('campaign').value;
+            const source = document.getElementById('source').value;
+            const medium = document.getElementById('medium').value;
+            const term = document.getElementById('term').value;
+            const content = document.getElementById('content').value;
+            const customParam = document.getElementById('customParam').value;
+
+            if (!baseUrl) {
+                document.getElementById('urlPreview').innerHTML = 'Enter your campaign details to see the UTM URL preview';
+                document.getElementById('urlPreview').classList.add('empty');
+                clearQRCode();
+                return;
+            }
+
+            // Build UTM URL
+            const url = new URL(baseUrl);
+            if (campaign) url.searchParams.set('utm_campaign', campaign);
+            if (source) url.searchParams.set('utm_source', source);
+            if (medium) url.searchParams.set('utm_medium', medium);
+            if (term) url.searchParams.set('utm_term', term);
+            if (content) url.searchParams.set('utm_content', content);
+            if (customParam) url.searchParams.set('custom', customParam);
+
+            const finalUrl = url.toString();
+
+            // Update preview
+            document.getElementById('urlPreview').textContent = finalUrl;
+            document.getElementById('urlPreview').classList.remove('empty');
+            
+            // Update character count
+            document.getElementById('urlLength').textContent = finalUrl.length;
+
+            // Generate QR code
+            generateQRCode(finalUrl);
+
+            // Animate preview update
+            gsap.from('#urlPreview', {duration: 0.3, y: 10, opacity: 0});
+        }
+
+        function generateQRCode(url) {
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+            
+            if (url && url !== 'Enter your campaign details to see the UTM URL preview') {
+                QRCode.toCanvas(qrContainer, url, {
+                    width: 200,
+                    margin: 2,
+                    color: {
+                        dark: '#000000',
+                        light: '#ffffff'
+                    }
+                }, function (error) {
+                    if (error) console.error(error);
+                    currentQR = qrContainer.querySelector('canvas');
+                });
+            }
+        }
+
+        function clearQRCode() {
+            document.getElementById('qrcode').innerHTML = '';
+            currentQR = null;
+        }
+
+        function copyUrl() {
+            const urlText = document.getElementById('urlPreview').textContent;
+            if (urlText && !urlText.includes('Enter your campaign')) {
+                navigator.clipboard.writeText(urlText).then(() => {
+                    showNotification('URL copied to clipboard!');
+                    saveToHistory(urlText);
+                    animateButton(event.target);
+                });
+            }
+        }
+
+        function shareUrl() {
+            const urlText = document.getElementById('urlPreview').textContent;
+            if (urlText && !urlText.includes('Enter your campaign')) {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'UTM Tracked URL',
+                        url: urlText
+                    });
+                } else {
+                    copyUrl();
+                }
+                animateButton(event.target);
+            }
+        }
+
+        function downloadQR() {
+            if (currentQR) {
+                const link = document.createElement('a');
+                link.download = 'utm-qr-code.png';
+                link.href = currentQR.toDataURL();
+                link.click();
+                showNotification('QR code downloaded!');
+                animateButton(event.target);
+            }
+        }
+
+        function saveToHistory(url) {
+            const campaign = document.getElementById('campaign').value;
+            const source = document.getElementById('source').value;
+            const medium = document.getElementById('medium').value;
+            
+            const historyItem = {
+                url: url,
+                campaign: campaign,
+                source: source,
+                medium: medium,
+                timestamp: new Date().toISOString(),
+                clicks: 0
+            };
+
+            urlHistory.unshift(historyItem);
+            urlHistory = urlHistory.slice(0, 50); // Keep only 50 recent URLs
+            
+            localStorage.setItem('utmHistory', JSON.stringify(urlHistory));
+            
+            // Update stats
+            stats.urlCount++;
+            if (campaign && !urlHistory.slice(1).some(item => item.campaign === campaign)) {
+                stats.campaignCount++;
+            }
+            localStorage.setItem('utmStats', JSON.stringify(stats));
+            
+            updateStats();
+            loadHistory();
+        }
+
+        function loadHistory() {
+            const container = document.getElementById('historyContainer');
+            container.innerHTML = '';
+
+            urlHistory.slice(0, 10).forEach((item, index) => {
+                const historyDiv = document.createElement('div');
+                historyDiv.className = 'history-item';
+                historyDiv.innerHTML = `
+                    <div class="history-url">${item.url}</div>
+                    <div class="history-meta">
+                        <span>${item.campaign} • ${item.source} • ${item.medium}</span>
+                        <span>${new Date(item.timestamp).toLocaleDateString()}</span>
+                    </div>
+                `;
+                historyDiv.onclick = () => {
+                    navigator.clipboard.writeText(item.url);
+                    showNotification('Historical URL copied!');
+                    animateButton(historyDiv);
+                };
+                container.appendChild(historyDiv);
+
+                // Animate history item
+                gsap.from(historyDiv, {duration: 0.3, x: -20, opacity: 0, delay: index * 0.1});
+            });
+        }
+
+        function clearHistory() {
+            urlHistory = [];
+            localStorage.removeItem('utmHistory');
+            loadHistory();
+            showNotification('History cleared!');
+            animateButton(event.target);
+        }
+
+        function updateStats() {
+            document.getElementById('urlCount').textContent = stats.urlCount;
+            document.getElementById('campaignCount').textContent = stats.campaignCount;
+        }
+
+        function generateBulkUrls() {
+            const bulkInput = document.getElementById('bulkUrls').value;
+            const urls = bulkInput.split('\n').filter(url => url.trim());
+            
+            if (urls.length === 0) {
+                showNotification('Please enter URLs for bulk generation', 'warning');
+                return;
+            }
+
+            const campaign = document.getElementById('campaign').value;
+            const source = document.getElementById('source').value;
+            const medium = document.getElementById('medium').value;
+            const term = document.getElementById('term').value;
+            const content = document.getElementById('content').value;
+
+            const results = urls.map(baseUrl => {
+                try {
+                    const url = new URL(baseUrl.trim());
+                    if (campaign) url.searchParams.set('utm_campaign', campaign);
+                    if (source) url.searchParams.set('utm_source', source);
+                    if (medium) url.searchParams.set('utm_medium', medium);
+                    if (term) url.searchParams.set('utm_term', term);
+                    if (content) url.searchParams.set('utm_content', content);
+                    return url.toString();
+                } catch (e) {
+                    return `Invalid URL: ${baseUrl}`;
+                }
+            });
+
+            // Display results in a modal-like overlay
+            showBulkResults(results);
+            showNotification(`Generated ${results.length} UTM URLs!`);
+        }
+
+        function showBulkResults(results) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                backdrop-filter: blur(10px);
+            `;
+
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                padding: 30px;
+                max-width: 80%;
+                max-height: 80%;
+                overflow-y: auto;
+                position: relative;
+            `;
+
+            content.innerHTML = `
+                <h2 style="margin-bottom: 20px; color: var(--text);">Bulk Generated URLs</h2>
+                <div style="margin-bottom: 20px;">
+                    ${results.map(url => `
+                        <div style="
+                            background: var(--background);
+                            border: 1px solid var(--border);
+                            border-radius: 8px;
+                            padding: 10px;
+                            margin-bottom: 10px;
+                            font-family: monospace;
+                            font-size: 0.9rem;
+                            word-break: break-all;
+                            color: var(--text);
+                        ">${url}</div>
+                    `).join('')}
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" onclick="copyBulkResults('${results.join('\\n')}')">Copy All</button>
+                    <button class="btn btn-secondary" onclick="document.body.removeChild(this.closest('div[style*=\"position: fixed\"]'))">Close</button>
+                </div>
+            `;
+
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+
+            // Animate modal
+            gsap.from(modal, {duration: 0.3, opacity: 0});
+            gsap.from(content, {duration: 0.3, scale: 0.8, delay: 0.1});
+        }
+
+        function copyBulkResults(results) {
+            navigator.clipboard.writeText(results).then(() => {
+                showNotification('All URLs copied to clipboard!');
+            });
+        }
+
+        function exportCSV() {
+            if (urlHistory.length === 0) {
+                showNotification('No URLs in history to export', 'warning');
+                return;
+            }
+
+            const headers = ['URL', 'Campaign', 'Source', 'Medium', 'Date Created'];
+            const csvContent = [
+                headers.join(','),
+                ...urlHistory.map(item => [
+                    `"${item.url}"`,
+                    item.campaign,
+                    item.source,
+                    item.medium,
+                    new Date(item.timestamp).toLocaleDateString()
+                ].join(','))
+            ].join('\n');
+
+            downloadFile(csvContent, 'utm-urls.csv', 'text/csv');
+            showNotification('CSV exported successfully!');
+            animateButton(event.target);
+        }
+
+        function exportJSON() {
+            if (urlHistory.length === 0) {
+                showNotification('No URLs in history to export', 'warning');
+                return;
+            }
+
+            const jsonContent = JSON.stringify({
+                exportDate: new Date().toISOString(),
+                totalUrls: urlHistory.length,
+                urls: urlHistory
+            }, null, 2);
+
+            downloadFile(jsonContent, 'utm-urls.json', 'application/json');
+            showNotification('JSON exported successfully!');
+            animateButton(event.target);
+        }
+
+        function exportPDF() {
+            // For a real implementation, you'd use a library like jsPDF
+            // This is a simplified version that creates a text file with PDF-like formatting
+            if (urlHistory.length === 0) {
+                showNotification('No URLs in history to export', 'warning');
+                return;
+            }
+
+            const pdfContent = `
+UTM URL REPORT
+Generated: ${new Date().toLocaleDateString()}
+Total URLs: ${urlHistory.length}
+
+${urlHistory.map((item, index) => `
+${index + 1}. ${item.campaign}
+   URL: ${item.url}
+   Source: ${item.source}
+   Medium: ${item.medium}
+   Created: ${new Date(item.timestamp).toLocaleDateString()}
+`).join('\n')}
+            `.trim();
+
+            downloadFile(pdfContent, 'utm-report.txt', 'text/plain');
+            showNotification('Report exported successfully!');
+            animateButton(event.target);
+        }
+
+        function downloadFile(content, filename, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function toggleAdvanced() {
+            const content = document.getElementById('advancedContent');
+            const button = event.target;
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                button.textContent = '⚙️ Advanced Options';
+            } else {
+                content.classList.add('show');
+                button.textContent = '⚙️ Hide Advanced Options';
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function animateButton(button) {
+            gsap.to(button, {duration: 0.1, scale: 0.95, yoyo: true, repeat: 1});
+        }
+
+        function createFloatingParticles() {
+            const container = document.querySelector('.floating-particles');
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                container.appendChild(particle);
+
+                // Animate particles
+                gsap.to(particle, {
+                    duration: Math.random() * 10 + 10,
+                    x: (Math.random() - 0.5) * 200,
+                    y: (Math.random() - 0.5) * 200,
+                    rotation: Math.random() * 360,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "none"
+                });
+
+                gsap.to(particle, {
+                    duration: Math.random() * 3 + 2,
+                    opacity: Math.random() * 0.7 + 0.3,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "power2.inOut"
+                });
+            }
+        }
+
+        // Advanced features for enterprise use
+        function initializeAdvancedFeatures() {
+            // URL shortening simulation
+            const urlShortener = document.createElement('div');
+            urlShortener.className = 'url-shortener';
+            urlShortener.innerHTML = `
+                <h4 style="margin-bottom: 10px; color: var(--text);">URL Shortening</h4>
+                <button class="btn btn-secondary" onclick="shortenUrl()" style="width: 100%;">Create Short URL</button>
+                <div id="shortUrl" style="margin-top: 10px; font-family: monospace; color: var(--text-secondary);"></div>
+            `;
+            
+            document.querySelector('.preview-section').appendChild(urlShortener);
+        }
+
+        function shortenUrl() {
+            const originalUrl = document.getElementById('urlPreview').textContent;
+            if (originalUrl && !originalUrl.includes('Enter your campaign')) {
+                // Simulate URL shortening
+                const shortCode = Math.random().toString(36).substring(2, 8);
+                const shortUrl = `https://utm.ly/${shortCode}`;
+                document.getElementById('shortUrl').textContent = shortUrl;
+                showNotification('Short URL created!');
+            }
+        }
+
+        // A/B Testing URL variants
+        function createABTestUrls() {
+            const baseUrl = document.getElementById('baseUrl').value;
+            const campaign = document.getElementById('campaign').value;
+            
+            if (!baseUrl || !campaign) {
+                showNotification('Please enter base URL and campaign name', 'warning');
+                return;
+            }
+
+            const variants = ['A', 'B'];
+            const results = variants.map(variant => {
+                const url = new URL(baseUrl);
+                url.searchParams.set('utm_campaign', `${campaign}_${variant}`);
+                url.searchParams.set('utm_source', document.getElementById('source').value);
+                url.searchParams.set('utm_medium', document.getElementById('medium').value);
+                url.searchParams.set('utm_content', `variant_${variant}`);
+                return url.toString();
+            });
+
+            showBulkResults(results);
+            showNotification('A/B test URLs generated!');
+        }
+
+        // Initialize advanced features
+        setTimeout(() => {
+            initializeAdvancedFeatures();
+        }, 1000);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'c':
+                        if (e.shiftKey) {
+                            e.preventDefault();
+                            copyUrl();
+                        }
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        updatePreview();
+                        break;
+                }
+            }
+        });
+
+        // Auto-save form data
+        function autoSave() {
+            const formData = {
+                baseUrl: document.getElementById('baseUrl').value,
+                campaign: document.getElementById('campaign').value,
+                source: document.getElementById('source').value,
+                medium: document.getElementById('medium').value,
+                term: document.getElementById('term').value,
+                content: document.getElementById('content').value,
+                customParam: document.getElementById('customParam').value
+            };
+            localStorage.setItem('utmFormData', JSON.stringify(formData));
+        }
+
+        function loadSavedData() {
+            const savedData = JSON.parse(localStorage.getItem('utmFormData') || '{}');
+            Object.keys(savedData).forEach(key => {
+                const element = document.getElementById(key);
+                if (element && savedData[key]) {
+                    element.value = savedData[key];
+                }
+            });
+        }
+
+        // Load saved data on page load
+        setTimeout(loadSavedData, 100);
+
+        // Auto-save every 5 seconds
+        setInterval(autoSave, 5000);
+
+        // Performance monitoring
+        let performanceMetrics = {
+            urlsGenerated: 0,
+            averageGenerationTime: 0,
+            totalTime: 0
+        };
+
+        function trackPerformance(startTime) {
+            const endTime = performance.now();
+            const duration = endTime - startTime;
+            
+            performanceMetrics.urlsGenerated++;
+            performanceMetrics.totalTime += duration;
+            performanceMetrics.averageGenerationTime = performanceMetrics.totalTime / performanceMetrics.urlsGenerated;
+            
+            console.log(`URL generated in ${duration.toFixed(2)}ms`);
+        }
+
+        // Enhanced URL validation
+        function validateUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                return {
+                    valid: true,
+                    protocol: urlObj.protocol,
+                    domain: urlObj.hostname,
+                    hasParams: urlObj.search.length > 0
+                };
+            } catch (e) {
+                return {
+                    valid: false,
+                    error: 'Invalid URL format'
+                };
+            }
+        }
+
+        // Team collaboration features
+        function shareWithTeam() {
+            const urlData = {
+                url: document.getElementById('urlPreview').textContent,
+                campaign: document.getElementById('campaign').value,
+                source: document.getElementById('source').value,
+                medium: document.getElementById('medium').value,
+                createdBy: 'Current User',
+                createdAt: new Date().toISOString()
+            };
+
+            // In a real app, this would send to a backend
+            const shareableLink = `data:application/json;base64,${btoa(JSON.stringify(urlData))}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'UTM Campaign',
+                    text: `Campaign: ${urlData.campaign}`,
+                    url: shareableLink
+                });
+            } else {
+                copyUrl();
+                showNotification('Campaign data copied for team sharing!');
+            }
+        }
+
+        // Add team sharing button
+        setTimeout(() => {
+            const teamButton = document.createElement('button');
+            teamButton.className = 'btn btn-secondary';
+            teamButton.innerHTML = '👥 Share with Team';
+            teamButton.onclick = shareWithTeam;
+            teamButton.style.width = '100%';
+            teamButton.style.marginTop = '10px';
+            
+            document.querySelector('.export-options').appendChild(teamButton);
+        }, 1500);
+    </script>
+</body>
+</html>
