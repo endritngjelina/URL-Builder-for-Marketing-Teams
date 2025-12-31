@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTM URL Builder Pro | Marketing Analytics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4a6cf7;
+            --primary-dark: #3050e0;
+            --secondary: #7e5bef;
+            --accent: #0ea5e9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --border: #e2e8f0;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --text: #334155;
+            --text-light: #64748b;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dark-mode {
+            --primary: #60a5fa;
+            --primary-dark: #3b82f6;
+            --secondary: #a78bfa;
+            --accent: #38bdf8;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #1e293b;
+            --gray: #64748b;
+            --border: #334155;
+            --card-bg: rgba(15, 23, 42, 0.95);
+            --text: #e2e8f0;
+            --text-light: #94a3b8;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            backdrop-filter: blur(30px);
+            border-radius: 24px;
+            box-shadow: 
+                0 32px 64px rgba(0, 0, 0, 0.12),
+                0 16px 32px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            transform: translateY(0);
+            animation: containerFadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+        }
+
+        .dark-mode .container {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 
+                0 32px 64px rgba(0, 0, 0, 0.25),
+                0 16px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        @keyframes containerFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        }
+
+        .dark-mode .container::before {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+            animation: rotate 25s linear infinite;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: rotate(15deg);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            color: var(--text);
+        }
+
+        .section-title i {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .form-section, .results-section {
+            background: linear-gradient(145deg, rgba(255,255,255,0.7) 0%, rgba(250,251,252,0.7) 100%);
+            padding: 36px;
+            border-radius: 24px;
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.05),
+                0 8px 16px rgba(0, 0, 0, 0.03),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            transform: translateY(0);
+            transition: var(--transition);
+        }
+
+        .dark-mode .form-section, 
+        .dark-mode .results-section {
+            background: linear-gradient(145deg, rgba(15,23,42,0.7) 0%, rgba(30,41,59,0.7) 100%);
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.2),
+                0 8px 16px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .form-section:hover, .results-section:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.08),
+                0 12px 20px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .dark-mode .form-section:hover, 
+        .dark-mode .results-section:hover {
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.3),
+                0 12px 20px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-size: 0.95rem;
+            letter-spacing: -0.02em;
+            transition: color 0.3s ease;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            font-size: 16px;
+            transition: var(--transition);
+            background: linear-gradient(145deg, #fafbfc 0%, #ffffff 100%);
+            font-family: inherit;
+            position: relative;
+            outline: none;
+            color: var(--text);
+        }
+
+        .dark-mode .form-group input, 
+        .dark-mode .form-group select {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border-color: var(--border);
+        }
+
+        .form-group input::placeholder {
+            color: var(--gray);
+            transition: opacity 0.3s ease;
+        }
+
+        .form-group input:focus::placeholder {
+            opacity: 0.6;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+            background: #ffffff;
+            box-shadow: 
+                0 0 0 4px rgba(74, 108, 247, 0.15),
+                0 8px 25px rgba(74, 108, 247, 0.1);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .dark-mode .form-group input:focus, 
+        .dark-mode .form-group select:focus {
+            background: #0f172a;
+            box-shadow: 
+                0 0 0 4px rgba(74, 108, 247, 0.25),
+                0 8px 25px rgba(74, 108, 247, 0.2);
+        }
+
+        .form-group input:hover:not(:focus), .form-group select:hover:not(:focus) {
+            border-color: var(--gray);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .quick-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .preset-btn {
+            padding: 12px 16px;
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            color: var(--text);
+        }
+
+        .dark-mode .preset-btn {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--border);
+        }
+
+        .preset-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .preset-btn:hover {
+            background: linear-gradient(145deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25);
+            border-color: transparent;
+        }
+
+        .preset-btn:hover::before {
+            left: 100%;
+        }
+
+        .preset-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .url-preview {
+            background: linear-gradient(145deg, #f8fafb 0%, #f1f3f4 100%);
+            border: 3px dashed var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 28px;
+            word-break: break-all;
+            font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            position: relative;
+            transition: var(--transition);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            color: var(--text);
+        }
+
+        .dark-mode .url-preview {
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+            border-color: var(--border);
+        }
+
+        .url-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 49%, rgba(255,255,255,0.1) 50%, transparent 51%);
+            background-size: 20px 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .url-preview.has-url {
+            background: linear-gradient(145deg, #e8f5e8 0%, #f0f8f0 100%);
+            border: 3px solid var(--success);
+            color: #155724;
+            transform: scale(1.02);
+            box-shadow: 
+                0 8px 25px rgba(40, 167, 69, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .dark-mode .url-preview.has-url {
+            background: linear-gradient(145deg, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0.05) 100%);
+            color: #d1fae5;
+        }
+
+        .url-preview.has-url::before {
+            opacity: 1;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            font-family: inherit;
+            letter-spacing: -0.02em;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 
+                0 8px 25px rgba(102, 126, 234, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #495057;
+            border: 1px solid #dee2e6;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .dark-mode .btn-secondary {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 
+                0 12px 35px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(-2px) scale(1.02);
+            transition-duration: 0.1s;
+        }
+
+        .qr-section {
+            text-align: center;
+            padding: 32px;
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+            display: none;
+        }
+
+        .dark-mode .qr-section {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        .qr-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .qr-code {
+            margin: 24px auto;
+            padding: 24px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 
+                0 12px 30px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            display: inline-block;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .dark-mode .qr-code {
+            background: #0f172a;
+            box-shadow: 
+                0 12px 30px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .qr-code:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .dark-mode .qr-code:hover {
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .analytics-preview {
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            padding: 28px;
+            margin-top: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dark-mode .analytics-preview {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        .analytics-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 70% 30%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .analytics-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+        }
+
+        .dark-mode .analytics-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .analytics-item:hover {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 16px 12px;
+            margin: 0 -12px;
+        }
+
+        .dark-mode .analytics-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .analytics-item:last-child {
+            border-bottom: none;
+        }
+
+        .analytics-label {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .analytics-value {
+            font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+            color: var(--text);
+        }
+
+        .dark-mode .analytics-value {
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .analytics-value:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .dark-mode .analytics-value:hover {
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dark-mode .success-message {
+            background: linear-gradient(135deg, rgba(16,185,129,0.2) 0%, rgba(16,185,129,0.15) 100%);
+            color: #d1fae5;
+        }
+
+        .campaign-templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .template-card {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            padding: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dark-mode .template-card {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid var(--border);
+        }
+
+        .template-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .template-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 
+                0 16px 40px rgba(102, 126, 234, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .dark-mode .template-card:hover {
+            box-shadow: 
+                0 16px 40px rgba(102, 126, 234, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .template-card:hover::before {
+            left: 100%;
+        }
+
+        .template-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-size: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .template-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        .history-section {
+            grid-column: 1 / -1;
+            background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
+            padding: 36px;
+            border-radius: 24px;
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.1),
+                0 8px 16px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dark-mode .history-section {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            box-shadow: 
+                0 16px 40px rgba(0, 0, 0, 0.2),
+                0 8px 16px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .history-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .dark-mode .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border);
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.7);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .dark-mode .history-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .history-url {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            color: var(--text);
+            flex: 1;
+            margin-right: 16px;
+            word-break: break-all;
+        }
+
+        .history-meta {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 8px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .history-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .history-btn {
+            padding: 8px 14px;
+            font-size: 0.8rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text);
+        }
+
+        .dark-mode .history-btn {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .history-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .shortened-url {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        .shortened-url input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--text);
+        }
+
+        .dark-mode .shortened-url input {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .form-section, .results-section {
+                padding: 24px;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-link"></i> UTM URL Builder Pro</h1>
+                <p>Professional campaign tracking for marketing teams with real-time analytics</p>
+            </div>
+            <div class="controls">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-sliders-h"></i>
+                    Campaign Parameters
+                </h3>
+                
+                <div class="form-group">
+                    <label for="baseUrl"><i class="fas fa-globe"></i> Website URL *</label>
+                    <input type="url" id="baseUrl" placeholder="https://example.com/page" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="campaignName"><i class="fas fa-bullhorn"></i> Campaign Name *</label>
+                    <input type="text" id="campaignName" placeholder="summer_sale_2024">
+                    <div class="quick-presets">
+                        <div class="preset-btn" onclick="setPreset('campaignName', 'black_friday')">Black Friday</div>
+                        <div class="preset-btn" onclick="setPreset('campaignName', 'newsletter')">Newsletter</div>
+                        <div class="preset-btn" onclick="setPreset('campaignName', 'social_media')">Social Media</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="campaignSource"><i class="fas fa-source"></i> Source *</label>
+                    <input type="text" id="campaignSource" placeholder="google, facebook, newsletter">
+                    <div class="quick-presets">
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'google')">Google</div>
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'facebook')">Facebook</div>
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'instagram')">Instagram</div>
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'twitter')">Twitter</div>
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'linkedin')">LinkedIn</div>
+                        <div class="preset-btn" onclick="setPreset('campaignSource', 'email')">Email</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="campaignMedium"><i class="fas fa-broadcast-tower"></i> Medium *</label>
+                    <select id="campaignMedium">
+                        <option value="">Select Medium</option>
+                        <option value="cpc">CPC (Cost Per Click)</option>
+                        <option value="cpm">CPM (Cost Per Mille)</option>
+                        <option value="social">Social</option>
+                        <option value="email">Email</option>
+                        <option value="organic">Organic</option>
+                        <option value="referral">Referral</option>
+                        <option value="display">Display</option>
+                        <option value="affiliate">Affiliate</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="campaignTerm"><i class="fas fa-key"></i> Keyword/Term (Optional)</label>
+                    <input type="text" id="campaignTerm" placeholder="running shoes, marketing software">
+                </div>
+
+                <div class="form-group">
+                    <label for="campaignContent"><i class="fas fa-palette"></i> Content (Optional)</label>
+                    <input type="text" id="campaignContent" placeholder="logolink, textlink, banner">
+                </div>
+
+                <h4 class="section-title" style="margin-top: 32px;">
+                    <i class="fas fa-layer-group"></i>
+                    Campaign Templates
+                </h4>
+                <div class="campaign-templates">
+                    <div class="template-card" onclick="loadTemplate('email')">
+                        <div class="template-title">Email Campaign</div>
+                        <div class="template-desc">Newsletter and email marketing</div>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('social')">
+                        <div class="template-title">Social Media</div>
+                        <div class="template-desc">Facebook, Instagram, Twitter posts</div>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('ppc')">
+                        <div class="template-title">PPC Campaign</div>
+                        <div class="template-desc">Google Ads, Bing Ads</div>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('influencer')">
+                        <div class="template-title">Influencer</div>
+                        <div class="template-desc">YouTube, TikTok, Instagram</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-line"></i>
+                    Generated URL & Analytics
+                </h3>
+                
+                <div class="url-preview" id="urlPreview">
+                    Your UTM-tracked URL will appear here...
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Copy URL
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateQR()">
+                        <i class="fas fa-qrcode"></i> Generate QR
+                    </button>
+                    <button class="btn btn-primary" onclick="shortenUrl()">
+                        <i class="fas fa-compress"></i> Shorten URL
+                    </button>
+                </div>
+
+                <div class="shortened-url" id="shortenedUrl" style="display: none;">
+                    <input type="text" id="shortUrlInput" readonly>
+                    <button class="btn btn-secondary" onclick="copyShortUrl()">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i> URL copied to clipboard!
+                </div>
+
+                <div class="qr-section" id="qrSection">
+                    <h4 style="margin-bottom: 16px; color: var(--text);">QR Code</h4>
+                    <div class="qr-code" id="qrCode"></div>
+                    <button class="btn btn-secondary" onclick="downloadQR()">
+                        <i class="fas fa-download"></i> Download QR Code
+                    </button>
+                </div>
+
+                <div class="analytics-preview">
+                    <h4 style="margin-bottom: 16px; color: var(--text);">UTM Parameters</h4>
+                    <div class="analytics-item">
+                        <span class="analytics-label">Campaign:</span>
+                        <span class="analytics-value" id="previewCampaign">-</span>
+                    </div>
+                    <div class="analytics-item">
+                        <span class="analytics-label">Source:</span>
+                        <span class="analytics-value" id="previewSource">-</span>
+                    </div>
+                    <div class="analytics-item">
+                        <span class="analytics-label">Medium:</span>
+                        <span class="analytics-value" id="previewMedium">-</span>
+                    </div>
+                    <div class="analytics-item">
+                        <span class="analytics-label">Term:</span>
+                        <span class="analytics-value" id="previewTerm">-</span>
+                    </div>
+                    <div class="analytics-item">
+                        <span class="analytics-label">Content:</span>
+                        <span class="analytics-value" id="previewContent">-</span>
+                    </div>
+                </div>
+
+                <div class="analytics-preview" style="margin-top: 30px;">
+                    <h4 style="margin-bottom: 16px; color: var(--text);">Campaign Performance</h4>
+                    <div class="chart-container">
+                        <canvas id="analyticsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <div class="history-header">
+                <h3 class="section-title">
+                    <i class="fas fa-history"></i>
+                    Campaign History
+                </h3>
+                <button class="btn btn-secondary" onclick="exportHistory()">
+                    <i class="fas fa-file-export"></i> Export CSV
+                </button>
+            </div>
+            <div id="urlHistory">
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h4>No URLs generated yet</h4>
+                    <p>Create your first UTM-tracked URL above!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let urlHistory = [];
+        let currentQRCode = null;
+        let analyticsChart = null;
+        let currentShortUrl = '';
+        
+        // DOM Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const inputs = {
+            baseUrl: document.getElementById('baseUrl'),
+            campaignName: document.getElementById('campaignName'),
+            campaignSource: document.getElementById('campaignSource'),
+            campaignMedium: document.getElementById('campaignMedium'),
+            campaignTerm: document.getElementById('campaignTerm'),
+            campaignContent: document.getElementById('campaignContent')
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved theme preference
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+            
+            // Load history from localStorage
+            loadHistory();
+            
+            // Initialize with example
+            inputs.baseUrl.value = 'https://yourwebsite.com/campaign';
+            inputs.campaignName.value = 'summer_sale_2024';
+            inputs.campaignSource.value = 'google';
+            inputs.campaignMedium.value = 'cpc';
+            buildURL();
+            
+            // Initialize analytics chart
+            initAnalyticsChart();
+        });
+        
+        // Theme toggle
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('darkMode', 'false');
+            }
+        });
+        
+        // Add event listeners to all inputs
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', buildURL);
+            input.addEventListener('change', buildURL);
+        });
+        
+        // Build the UTM URL
+        function buildURL() {
+            const baseUrl = inputs.baseUrl.value.trim();
+            const campaign = inputs.campaignName.value.trim();
+            const source = inputs.campaignSource.value.trim();
+            const medium = inputs.campaignMedium.value.trim();
+            const term = inputs.campaignTerm.value.trim();
+            const content = inputs.campaignContent.value.trim();
+        
+            if (!baseUrl || !campaign || !source || !medium) {
+                document.getElementById('urlPreview').textContent = 'Your UTM-tracked URL will appear here...';
+                document.getElementById('urlPreview').classList.remove('has-url');
+                updateAnalyticsPreview('', '', '', '', '');
+                return;
+            }
+        
+            try {
+                const url = new URL(baseUrl);
+                url.searchParams.set('utm_campaign', campaign);
+                url.searchParams.set('utm_source', source);
+                url.searchParams.set('utm_medium', medium);
+                
+                if (term) url.searchParams.set('utm_term', term);
+                if (content) url.searchParams.set('utm_content', content);
+        
+                const finalUrl = url.toString();
+                const urlPreview = document.getElementById('urlPreview');
+                urlPreview.textContent = finalUrl;
+                urlPreview.classList.add('has-url');
+        
+                updateAnalyticsPreview(campaign, source, medium, term, content);
+                updateAnalyticsChart();
+            } catch (e) {
+                document.getElementById('urlPreview').textContent = 'Invalid URL. Please enter a valid website URL.';
+                document.getElementById('urlPreview').classList.remove('has-url');
+            }
+        }
+        
+        // Update the analytics preview
+        function updateAnalyticsPreview(campaign, source, medium, term, content) {
+            document.getElementById('previewCampaign').textContent = campaign || '-';
+            document.getElementById('previewSource').textContent = source || '-';
+            document.getElementById('previewMedium').textContent = medium || '-';
+            document.getElementById('previewTerm').textContent = term || '-';
+            document.getElementById('previewContent').textContent = content || '-';
+        }
+        
+        // Set preset values
+        function setPreset(fieldId, value) {
+            document.getElementById(fieldId).value = value;
+            buildURL();
+        }
+        
+        // Load template
+        function loadTemplate(type) {
+            const templates = {
+                email: {
+                    source: 'newsletter',
+                    medium: 'email',
+                    campaign: 'monthly_newsletter'
+                },
+                social: {
+                    source: 'facebook',
+                    medium: 'social',
+                    campaign: 'social_engagement'
+                },
+                ppc: {
+                    source: 'google',
+                    medium: 'cpc',
+                    campaign: 'paid_search'
+                },
+                influencer: {
+                    source: 'youtube',
+                    medium: 'influencer',
+                    campaign: 'influencer_collab'
+                }
+            };
+        
+            const template = templates[type];
+            if (template) {
+                inputs.campaignSource.value = template.source;
+                inputs.campaignMedium.value = template.medium;
+                inputs.campaignName.value = template.campaign;
+                buildURL();
+            }
+        }
+        
+        // Copy URL to clipboard
+        async function copyToClipboard() {
+            const urlText = document.getElementById('urlPreview').textContent;
+            if (urlText === 'Your UTM-tracked URL will appear here...' || 
+                urlText === 'Invalid URL. Please enter a valid website URL.') {
+                showAlert('Please build a valid URL first!', 'warning');
+                return;
+            }
+        
+            try {
+                await navigator.clipboard.writeText(urlText);
+                showAlert('✅ URL copied to clipboard!');
+                addToHistory(urlText);
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = urlText;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showAlert('✅ URL copied to clipboard!');
+                    addToHistory(urlText);
+                } catch (err) {
+                    showAlert('Failed to copy URL', 'error');
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+        
+        // Copy short URL to clipboard
+        async function copyShortUrl() {
+            if (!currentShortUrl) return;
+            
+            try {
+                await navigator.clipboard.writeText(currentShortUrl);
+                showAlert('✅ Short URL copied to clipboard!');
+            } catch (err) {
+                showAlert('Failed to copy short URL', 'error');
+            }
+        }
+        
+        // Show alert message
+        function showAlert(message, type = 'success') {
+            const messageEl = document.getElementById('successMessage');
+            messageEl.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+            messageEl.style.display = 'flex';
+            
+            if (type === 'error') {
+                messageEl.style.background = 'linear-gradient(135deg, #f8d7da 0%, #f5c2c7 100%)';
+                messageEl.style.color = '#721c24';
+            } else if (type === 'warning') {
+                messageEl.style.background = 'linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%)';
+                messageEl.style.color = '#856404';
+            } else {
+                messageEl.style.background = 'linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%)';
+                messageEl.style.color = '#155724';
+            }
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Generate QR code
+        function generateQR() {
+            const urlText = document.getElementById('urlPreview').textContent;
+            if (urlText === 'Your UTM-tracked URL will appear here...' || 
+                urlText === 'Invalid URL. Please enter a valid website URL.') {
+                showAlert('Please build a valid URL first!', 'warning');
+                return;
+            }
+        
+            const qr = qrcode(0, 'M');
+            qr.addData(urlText);
+            qr.make();
+        
+            const qrSection = document.getElementById('qrSection');
+            const qrCode = document.getElementById('qrCode');
+            
+            qrCode.innerHTML = qr.createImgTag(6, 8);
+            qrSection.style.display = 'block';
+            qrSection.classList.add('fade-in');
+            
+            currentQRCode = qr;
+        }
+        
+        // Download QR code
+        function downloadQR() {
+            if (!currentQRCode) return;
+        
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const size = 300;
+            canvas.width = size;
+            canvas.height = size;
+        
+            // Create QR code data URL
+            const qrDataURL = currentQRCode.createDataURL(6, 8);
+            const img = new Image();
+            img.onload = function() {
+                ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#0f172a' : 'white';
+                ctx.fillRect(0, 0, size, size);
+                ctx.drawImage(img, 0, 0, size, size);
+        
+                // Download
+                const link = document.createElement('a');
+                link.download = 'utm-qr-code.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            };
+            img.src = qrDataURL;
+        }
+        
+        // Shorten URL (mock implementation)
+        function shortenUrl() {
+            const urlText = document.getElementById('urlPreview').textContent;
+            if (urlText === 'Your UTM-tracked URL will appear here...' || 
+                urlText === 'Invalid URL. Please enter a valid website URL.') {
+                showAlert('Please build a valid URL first!', 'warning');
+                return;
+            }
+            
+            // In a real implementation, this would call a URL shortening API
+            // For demo purposes, we'll just generate a mock short URL
+            const shortUrl = `https://short.url/${Math.random().toString(36).substring(2, 9)}`;
+            currentShortUrl = shortUrl;
+            
+            const shortUrlInput = document.getElementById('shortUrlInput');
+            shortUrlInput.value = shortUrl;
+            document.getElementById('shortenedUrl').style.display = 'flex';
+            
+            showAlert('URL shortened successfully!');
+        }
+        
+        // Add URL to history
+        function addToHistory(url) {
+            const timestamp = new Date().toLocaleString();
+            const historyItem = {
+                url: url,
+                timestamp: timestamp,
+                campaign: inputs.campaignName.value,
+                source: inputs.campaignSource.value,
+                medium: inputs.campaignMedium.value
+            };
+        
+            urlHistory.unshift(historyItem);
+            if (urlHistory.length > 10) urlHistory.pop(); // Keep only last 10
+            
+            saveHistory();
+            renderHistory();
+        }
+        
+        // Save history to localStorage
+        function saveHistory() {
+            localStorage.setItem('urlHistory', JSON.stringify(urlHistory));
+        }
+        
+        // Load history from localStorage
+        function loadHistory() {
+            const savedHistory = localStorage.getItem('urlHistory');
+            if (savedHistory) {
+                urlHistory = JSON.parse(savedHistory);
+                renderHistory();
+            }
+        }
+        
+        // Render history
+        function renderHistory() {
+            const historyContainer = document.getElementById('urlHistory');
+            
+            if (urlHistory.length === 0) {
+                historyContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h4>No URLs generated yet</h4>
+                        <p>Create your first UTM-tracked URL above!</p>
+                    </div>
+                `;
+                return;
+            }
+        
+            historyContainer.innerHTML = urlHistory.map((item, index) => `
+                <div class="history-item fade-in">
+                    <div>
+                        <div class="history-url">${item.url}</div>
+                        <div class="history-meta">
+                            <span><i class="fas fa-calendar"></i> ${item.timestamp}</span>
+                            <span><i class="fas fa-bullhorn"></i> ${item.campaign}</span>
+                            <span><i class="fas fa-source"></i> ${item.source}</span>
+                            <span><i class="fas fa-broadcast-tower"></i> ${item.medium}</span>
+                        </div>
+                    </div>
+                    <div class="history-actions">
+                        <button class="history-btn" onclick="copyHistoryURL(${index})">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="history-btn" onclick="generateHistoryQR(${index})">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        <button class="history-btn" onclick="removeFromHistory(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Copy URL from history
+        async function copyHistoryURL(index) {
+            try {
+                await navigator.clipboard.writeText(urlHistory[index].url);
+                showAlert('✅ URL copied to clipboard!');
+            } catch (err) {
+                showAlert('Failed to copy URL', 'error');
+            }
+        }
+        
+        // Generate QR for history item
+        function generateHistoryQR(index) {
+            const url = urlHistory[index].url;
+            const qr = qrcode(0, 'M');
+            qr.addData(url);
+            qr.make();
+        
+            const qrSection = document.getElementById('qrSection');
+            const qrCode = document.getElementById('qrCode');
+            
+            qrCode.innerHTML = qr.createImgTag(6, 8);
+            qrSection.style.display = 'block';
+            qrSection.scrollIntoView({ behavior: 'smooth' });
+            
+            currentQRCode = qr;
+        }
+        
+        // Remove from history
+        function removeFromHistory(index) {
+            urlHistory.splice(index, 1);
+            saveHistory();
+            renderHistory();
+        }
+        
+        // Export history as CSV
+        function exportHistory() {
+            if (urlHistory.length === 0) {
+                showAlert('No history to export', 'warning');
+                return;
+            }
+            
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "URL,Campaign,Source,Medium,Timestamp\n";
+            
+            urlHistory.forEach(item => {
+                csvContent += `"${item.url}","${item.campaign}","${item.source}","${item.medium}","${item.timestamp}"\n`;
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "utm_history.csv");
+            document.body.appendChild(link);
+            
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Initialize analytics chart
+        function initAnalyticsChart() {
+            const ctx = document.getElementById('analyticsChart').getContext('2d');
+            analyticsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Clicks', 'Conversions', 'CTR', 'CPC'],
+                    datasets: [{
+                        label: 'Campaign Performance',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: [
+                            'rgba(74, 108, 247, 0.7)',
+                            'rgba(126, 91, 239, 0.7)',
+                            'rgba(14, 165, 233, 0.7)',
+                            'rgba(16, 185, 129, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(74, 108, 247, 1)',
+                            'rgba(126, 91, 239, 1)',
+                            'rgba(14, 165, 233, 1)',
+                            'rgba(16, 185, 129, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: document.body.classList.contains('dark-mode') ? '#94a3b8' : '#64748b'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: document.body.classList.contains('dark-mode') ? '#94a3b8' : '#64748b'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: document.body.classList.contains('dark-mode') ? '#e2e8f0' : '#334155'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update analytics chart with mock data
+        function updateAnalyticsChart() {
+            if (!analyticsChart) return;
+            
+            // Generate mock campaign performance data
+            const clicks = Math.floor(Math.random() * 1000) + 500;
+            const conversions = Math.floor(clicks * (Math.random() * 0.2 + 0.05));
+            const ctr = (Math.random() * 5 + 1).toFixed(2);
+            const cpc = (Math.random() * 2 + 0.1).toFixed(2);
+            
+            analyticsChart.data.datasets[0].data = [clicks, conversions, ctr, cpc];
+            analyticsChart.update();
+        }
+    </script>
+</body>
+</html>
