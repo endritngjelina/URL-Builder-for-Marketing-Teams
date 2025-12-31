@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTM URL Builder Pro - Marketing Campaign Manager</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --dark-gradient: linear-gradient(135deg, #232f3e 0%, #37475a 100%);
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            --neutral-900: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --radius-xs: 4px;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 20px;
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-lg: 16px;
+            --spacing-xl: 20px;
+            --spacing-2xl: 24px;
+            --spacing-3xl: 32px;
+            --spacing-4xl: 40px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+            background: var(--primary-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: var(--spacing-xl);
+            font-feature-settings: "liga" 1, "kern" 1;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: var(--neutral-800);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: var(--radius-2xl);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-2xl);
+            overflow: hidden;
+            position: relative;
+            animation: slideUp 0.6s ease-out;
+            color: var(--neutral-100);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: var(--dark-gradient);
+            color: white;
+            padding: var(--spacing-4xl);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            margin-bottom: var(--spacing-md);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+        }
+
+        .header p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-3xl);
+            padding: var(--spacing-3xl);
+            min-height: 800px;
+        }
+
+        .form-section, .results-section {
+            background: rgba(30, 41, 59, 0.7);
+            padding: var(--spacing-3xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-section:hover, .results-section:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .form-section h2, .results-section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--neutral-100);
+            margin-bottom: var(--spacing-2xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .form-section h2::before {
+            content: '🎯';
+            font-size: 1.25rem;
+        }
+
+        .results-section h2::before {
+            content: '🚀';
+            font-size: 1.25rem;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-2xl);
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 600;
+            color: var(--neutral-200);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            transition: color 0.2s ease;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: var(--spacing-lg);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(15, 23, 42, 0.5);
+            font-family: inherit;
+            position: relative;
+            color: var(--neutral-100);
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--info-color);
+            background: rgba(15, 23, 42, 0.7);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-group input:focus + label, .form-group select:focus + label, .form-group textarea:focus + label {
+            color: var(--info-color);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .form-group input::placeholder, .form-group textarea::placeholder {
+            color: var(--neutral-400);
+            font-style: italic;
+        }
+
+        .required {
+            color: var(--danger-color);
+            font-weight: 700;
+        }
+
+        .url-preview {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 41, 59, 0.5) 100%);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-xl);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--info-color);
+            word-break: break-all;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            position: relative;
+            transition: all 0.3s ease;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            color: var(--neutral-100);
+        }
+
+        .url-preview:hover {
+            border-color: var(--info-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .url-preview em {
+            color: var(--neutral-400);
+            font-style: italic;
+        }
+
+        .button-group {
+            display: flex;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .btn {
+            padding: var(--spacing-lg) var(--spacing-2xl);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            min-height: 48px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--secondary-gradient);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--neutral-600);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary:hover {
+            background: var(--neutral-700);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--neutral-300);
+            border: 2px solid var(--neutral-400);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--neutral-300);
+            transform: translateY(-2px);
+        }
+
+        .qr-container {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 41, 59, 0.5) 100%);
+            border-radius: var(--radius-lg);
+            border: 2px dashed var(--neutral-400);
+            margin-bottom: var(--spacing-xl);
+            transition: all 0.3s ease;
+        }
+
+        .qr-container:hover {
+            border-color: var(--info-color);
+            background: rgba(30, 41, 59, 0.7);
+        }
+
+        .qr-container h4 {
+            color: var(--neutral-200);
+            margin-bottom: var(--spacing-lg);
+            font-weight: 600;
+        }
+
+        .qr-code {
+            margin: var(--spacing-xl) 0;
+            display: inline-block;
+            padding: var(--spacing-lg);
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .presets-section {
+            margin-bottom: var(--spacing-3xl);
+            padding: var(--spacing-2xl);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 41, 59, 0.5) 100%);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .presets-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 48%, rgba(59, 130, 246, 0.05) 50%, transparent 52%);
+            pointer-events: none;
+        }
+
+        .presets-section h3 {
+            margin-bottom: var(--spacing-lg);
+            color: var(--neutral-100);
+            font-weight: 700;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .presets-section h3::before {
+            content: '⚡';
+            font-size: 1rem;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .preset-btn {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: rgba(15, 23, 42, 0.5);
+            border: 2px solid var(--neutral-600);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--neutral-200);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preset-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--secondary-gradient);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .preset-btn:hover {
+            border-color: transparent;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .preset-btn:hover::before {
+            left: 0;
+        }
+
+        .analytics-preview {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 41, 59, 0.5) 100%);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-lg);
+            margin-top: var(--spacing-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .analytics-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--secondary-gradient);
+            border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+        }
+
+        .analytics-preview h4 {
+            margin-bottom: var(--spacing-lg);
+            color: var(--neutral-100);
+            font-weight: 700;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .param-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .param-list li {
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+
+        .param-list li:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            margin: 0 calc(-1 * var(--spacing-lg));
+            padding-left: var(--spacing-lg);
+            padding-right: var(--spacing-lg);
+            border-radius: var(--radius-sm);
+        }
+
+        .param-list li:last-child {
+            border-bottom: none;
+        }
+
+        .param-name {
+            font-weight: 600;
+            color: var(--neutral-100);
+            font-size: 0.875rem;
+        }
+
+        .param-value {
+            color: var(--neutral-300);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-size: 0.75rem;
+            background: rgba(15, 23, 42, 0.7);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-xs);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .notification {
+            position: fixed;
+            top: var(--spacing-2xl);
+            right: var(--spacing-2xl);
+            background: rgba(30, 41, 59, 0.95);
+            color: var(--neutral-100);
+            padding: var(--spacing-lg) var(--spacing-2xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateX(400px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            min-width: 280px;
+            backdrop-filter: blur(12px);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .notification::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--secondary-gradient);
+            opacity: 0.05;
+            border-radius: inherit;
+        }
+
+        .campaign-history {
+            margin-top: var(--spacing-xl);
+            background: rgba(15, 23, 42, 0.5);
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .campaign-history h4 {
+            margin-bottom: var(--spacing-lg);
+            color: var(--neutral-100);
+            font-weight: 700;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .campaign-history h4::before {
+            content: '📊';
+            font-size: 1rem;
+        }
+
+        .history-item {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.3s ease;
+        }
+
+        .history-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            transform: translateX(4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--info-color);
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-name {
+            font-weight: 600;
+            color: var(--neutral-100);
+            margin-bottom: var(--spacing-sm);
+            font-size: 0.875rem;
+        }
+
+        .history-url {
+            font-size: 0.75rem;
+            color: var(--neutral-400);
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            word-break: break-all;
+            line-height: 1.4;
+            background: rgba(15, 23, 42, 0.7);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-xs);
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-2xl);
+                padding: var(--spacing-2xl);
+            }
+            
+            .header {
+                padding: var(--spacing-2xl);
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                justify-content: center;
+                min-height: 52px;
+            }
+
+            .preset-buttons {
+                flex-direction: column;
+            }
+
+            .preset-btn {
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: var(--spacing-md);
+            }
+
+            .container {
+                border-radius: var(--radius-xl);
+            }
+
+            .form-section, .results-section {
+                padding: var(--spacing-xl);
+            }
+
+            .header {
+                padding: var(--spacing-xl);
+            }
+
+            .main-content {
+                padding: var(--spacing-xl);
+                gap: var(--spacing-xl);
+            }
+
+            .notification {
+                left: var(--spacing-md);
+                right: var(--spacing-md);
+                top: var(--spacing-xl);
+                transform: translateY(-100px);
+                min-width: auto;
+            }
+
+            .notification.show {
+                transform: translateY(0);
+            }
+        }
+
+        .advanced-options {
+            margin-top: var(--spacing-xl);
+            padding: var(--spacing-2xl);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 41, 59, 0.5) 100%);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--warning-color);
+            position: relative;
+        }
+
+        .advanced-options::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, transparent 30%, rgba(245, 158, 11, 0.1) 70%);
+            border-radius: 0 var(--radius-lg) 0 30px;
+        }
+
+        .advanced-options h4 {
+            margin-bottom: var(--spacing-lg);
+            color: var(--neutral-100);
+            font-weight: 700;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .advanced-options h4::before {
+            content: '⚙️';
+            font-size: 1rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-md);
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-group:hover {
+            border-color: var(--info-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: var(--spacing-md);
+            accent-color: var(--info-color);
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: 500;
+            color: var(--neutral-200);
+            cursor: pointer;
+            font-size: 0.875rem;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .validation-error {
+            color: var(--danger-color);
+            font-size: 0.75rem;
+            margin-top: var(--spacing-xs);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .validation-error::before {
+            content: '⚠️';
+            font-size: 0.875rem;
+        }
+
+        .url-valid {
+            border-color: var(--success-color) !important;
+            background: rgba(16, 185, 129, 0.05) !important;
+        }
+
+        .url-invalid {
+            border-color: var(--danger-color) !important;
+            background: rgba(239, 68, 68, 0.05) !important;
+        }
+
+        /* Loading states */
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Focus states for accessibility */
+        .btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Selection styling */
+        ::selection {
+            background: rgba(102, 126, 234, 0.2);
+            color: var(--neutral-100);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--neutral-800);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--neutral-600);
+            border-radius: var(--radius-sm);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neutral-500);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-2xl);
+        }
+        
+        .dashboard-card {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-2xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dashboard-card h4 {
+            margin-bottom: var(--spacing-lg);
+            color: var(--neutral-100);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+        
+        .ai-suggestions {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-2xl);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: var(--spacing-2xl);
+        }
+        
+        .suggestion {
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: var(--spacing-md);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .suggestion:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .suggestion h5 {
+            color: var(--neutral-100);
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .suggestion p {
+            color: var(--neutral-300);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .feature-badge {
+            background: var(--secondary-gradient);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+        }
+        
+        .share-btn {
+            background: var(--info-color);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .share-btn:hover {
+            background: #2563eb;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-rocket"></i> UTM URL Builder Pro</h1>
+            <p>Professional Campaign URL Generator with AI-Powered Optimization for Marketing Teams</p>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h2>Campaign URL Builder</h2>
+                
+                <div class="presets-section">
+                    <h3>Quick Presets</h3>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" onclick="loadPreset('email')"><i class="fas fa-envelope"></i> Email Campaign</button>
+                        <button class="preset-btn" onclick="loadPreset('social')"><i class="fas fa-hashtag"></i> Social Media</button>
+                        <button class="preset-btn" onclick="loadPreset('ppc')"><i class="fas fa-ad"></i> PPC Campaign</button>
+                        <button class="preset-btn" onclick="loadPreset('affiliate')"><i class="fas fa-handshake"></i> Affiliate</button>
+                        <button class="preset-btn" onclick="loadPreset('newsletter')"><i class="fas fa-newspaper"></i> Newsletter</button>
+                    </div>
+                </div>
+
+                <form id="utmForm">
+                    <div class="form-group">
+                        <label for="baseUrl">Website URL <span class="required">*</span></label>
+                        <input type="url" id="baseUrl" placeholder="https://example.com/landing-page" required>
+                        <div id="urlValidation" class="validation-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="campaign">Campaign Name <span class="required">*</span></label>
+                        <input type="text" id="campaign" placeholder="summer_sale_2024" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="source">Campaign Source <span class="required">*</span></label>
+                        <input type="text" id="source" placeholder="google, facebook, newsletter" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medium">Campaign Medium <span class="required">*</span></label>
+                        <select id="medium" required>
+                            <option value="">Select Medium</option>
+                            <option value="email">Email</option>
+                            <option value="social">Social</option>
+                            <option value="cpc">Cost Per Click (CPC)</option>
+                            <option value="banner">Display Banner</option>
+                            <option value="affiliate">Affiliate</option>
+                            <option value="referral">Referral</option>
+                            <option value="direct">Direct</option>
+                            <option value="organic">Organic Search</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="customMediumGroup" style="display: none;">
+                        <label for="customMedium">Custom Medium</label>
+                        <input type="text" id="customMedium" placeholder="Enter custom medium">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="term">Campaign Term (Optional)</label>
+                        <input type="text" id="term" placeholder="paid keywords, target audience">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">Campaign Content (Optional)</label>
+                        <input type="text" id="content" placeholder="ad variation, button color, A/B test">
+                    </div>
+
+                    <div class="advanced-options">
+                        <h4>Advanced Options</h4>
+                        <span class="feature-badge">NEW</span>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="includeTimestamp">
+                            <label for="includeTimestamp">Include Timestamp</label>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="shortenParams">
+                            <label for="shortenParams">Use Shortened Parameter Names</label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customParam1">Custom Parameter 1</label>
+                            <input type="text" id="customParam1" placeholder="param_name=value">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customParam2">Custom Parameter 2</label>
+                            <input type="text" id="customParam2" placeholder="param_name=value">
+                        </div>
+                    </div>
+                </form>
+
+                <div class="campaign-history">
+                    <h4><i class="fas fa-history"></i> Recent Campaigns</h4>
+                    <div id="historyList">
+                        <p style="color: var(--neutral-400); font-style: italic;">No campaigns saved yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <h2>Generated URL & Preview</h2>
+                
+                <div class="url-preview" id="urlPreview">
+                    <em>Enter your campaign details to generate a tracked URL</em>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Copy URL
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateQR()">
+                        <i class="fas fa-qrcode"></i> Generate QR
+                    </button>
+                    <button class="btn btn-success" onclick="saveCampaign()">
+                        <i class="fas fa-save"></i> Save Campaign
+                    </button>
+                    <button class="btn share-btn" onclick="shareCampaign()">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+
+                <div class="qr-container" id="qrContainer" style="display: none;">
+                    <h4>QR Code</h4>
+                    <canvas id="qrcode"></canvas>
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-secondary" onclick="downloadQR()">
+                            <i class="fas fa-download"></i> Download QR
+                        </button>
+                    </div>
+                </div>
+
+                <div class="analytics-preview">
+                    <h4><i class="fas fa-chart-pie"></i> URL Parameters Breakdown</h4>
+                    <ul class="param-list" id="paramList">
+                        <li><span class="param-name">No parameters yet</span></li>
+                    </ul>
+                </div>
+                
+                <div class="dashboard">
+                    <div class="dashboard-card">
+                        <h4><i class="fas fa-chart-line"></i> Channel Performance</h4>
+                        <div class="chart-container">
+                            <canvas id="channelChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h4><i class="fas fa-bullseye"></i> Campaign Effectiveness</h4>
+                        <div class="chart-container">
+                            <canvas id="effectivenessChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ai-suggestions">
+                    <h4><i class="fas fa-robot"></i> AI-Powered Suggestions</h4>
+                    <div id="aiSuggestions">
+                        <div class="suggestion" onclick="applySuggestion('source')">
+                            <h5><i class="fas fa-lightbulb"></i> Source Optimization</h5>
+                            <p>Based on historical data, adding "utm_content=cta_button" could increase conversions by 12%</p>
+                        </div>
+                        <div class="suggestion" onclick="applySuggestion('medium')">
+                            <h5><i class="fas fa-lightbulb"></i> Medium Enhancement</h5>
+                            <p>Campaigns with custom parameters have shown 18% higher engagement. Consider adding one.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        let campaignHistory = JSON.parse(localStorage.getItem('campaignHistory') || '[]');
+        let currentQRCode = null;
+        let channelChart = null;
+        let effectivenessChart = null;
+
+        // Form elements
+        const form = document.getElementById('utmForm');
+        const baseUrl = document.getElementById('baseUrl');
+        const campaign = document.getElementById('campaign');
+        const source = document.getElementById('source');
+        const medium = document.getElementById('medium');
+        const customMedium = document.getElementById('customMedium');
+        const term = document.getElementById('term');
+        const content = document.getElementById('content');
+        const includeTimestamp = document.getElementById('includeTimestamp');
+        const shortenParams = document.getElementById('shortenParams');
+        const customParam1 = document.getElementById('customParam1');
+        const customParam2 = document.getElementById('customParam2');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateHistory();
+            
+            // Real-time URL generation
+            const inputs = [baseUrl, campaign, source, medium, customMedium, term, content, includeTimestamp, shortenParams, customParam1, customParam2];
+            inputs.forEach(input => {
+                input.addEventListener('input', generateURL);
+                input.addEventListener('change', generateURL);
+            });
+
+            // Custom medium toggle
+            medium.addEventListener('change', function() {
+                const customGroup = document.getElementById('customMediumGroup');
+                customGroup.style.display = this.value === 'custom' ? 'block' : 'none';
+                generateURL();
+            });
+
+            // URL validation
+            baseUrl.addEventListener('input', validateURL);
+            
+            // Initialize charts
+            initCharts();
+            
+            // Generate initial URL
+            setTimeout(generateURL, 500);
+        });
+
+        function validateURL() {
+            const url = baseUrl.value;
+            const validation = document.getElementById('urlValidation');
+            
+            if (url && !isValidURL(url)) {
+                validation.textContent = 'Please enter a valid URL (must include http:// or https://)';
+                baseUrl.classList.add('url-invalid');
+                baseUrl.classList.remove('url-valid');
+            } else if (url) {
+                validation.textContent = '';
+                baseUrl.classList.add('url-valid');
+                baseUrl.classList.remove('url-invalid');
+            } else {
+                validation.textContent = '';
+                baseUrl.classList.remove('url-valid', 'url-invalid');
+            }
+        }
+
+        function isValidURL(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function generateURL() {
+            const base = baseUrl.value.trim();
+            const campaignName = campaign.value.trim();
+            const sourceValue = source.value.trim();
+            const mediumValue = medium.value === 'custom' ? customMedium.value.trim() : medium.value;
+
+            if (!base || !campaignName || !sourceValue || !mediumValue) {
+                document.getElementById('urlPreview').innerHTML = '<em>Please fill in all required fields</em>';
+                document.getElementById('paramList').innerHTML = '<li><span class="param-name">No parameters yet</span></li>';
+                return;
+            }
+
+            const urlObj = new URL(base);
+            const params = new URLSearchParams();
+
+            // UTM parameters
+            const paramNames = shortenParams.checked ? 
+                { campaign: 'c', source: 's', medium: 'm', term: 't', content: 'ct' } :
+                { campaign: 'utm_campaign', source: 'utm_source', medium: 'utm_medium', term: 'utm_term', content: 'utm_content' };
+
+            params.set(paramNames.campaign, campaignName);
+            params.set(paramNames.source, sourceValue);
+            params.set(paramNames.medium, mediumValue);
+
+            if (term.value.trim()) params.set(paramNames.term, term.value.trim());
+            if (content.value.trim()) params.set(paramNames.content, content.value.trim());
+
+            // Timestamp
+            if (includeTimestamp.checked) {
+                params.set('timestamp', new Date().toISOString().slice(0, 19).replace(/:/g, '-'));
+            }
+
+            // Custom parameters
+            if (customParam1.value.trim()) {
+                const [key, value] = customParam1.value.split('=');
+                if (key && value) params.set(key.trim(), value.trim());
+            }
+            if (customParam2.value.trim()) {
+                const [key, value] = customParam2.value.split('=');
+                if (key && value) params.set(key.trim(), value.trim());
+            }
+
+            // Merge with existing parameters
+            const existingParams = new URLSearchParams(urlObj.search);
+            for (const [key, value] of existingParams) {
+                if (!params.has(key)) params.set(key, value);
+            }
+
+            urlObj.search = params.toString();
+            const finalURL = urlObj.toString();
+
+            // Update preview
+            document.getElementById('urlPreview').textContent = finalURL;
+
+            // Update parameters list
+            updateParametersList(params);
+            
+            // Update charts
+            updateCharts();
+        }
+
+        function updateParametersList(params) {
+            const list = document.getElementById('paramList');
+            list.innerHTML = '';
+
+            for (const [key, value] of params) {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="param-name">${key}</span><span class="param-value">${value}</span>`;
+                list.appendChild(li);
+            }
+        }
+
+        function loadPreset(type) {
+            const presets = {
+                email: {
+                    source: 'email',
+                    medium: 'email',
+                    campaign: 'newsletter_' + new Date().toISOString().slice(0, 10)
+                },
+                social: {
+                    source: 'facebook',
+                    medium: 'social',
+                    campaign: 'social_campaign_' + new Date().toISOString().slice(0, 10)
+                },
+                ppc: {
+                    source: 'google',
+                    medium: 'cpc',
+                    campaign: 'ppc_campaign_' + new Date().toISOString().slice(0, 10)
+                },
+                affiliate: {
+                    source: 'affiliate_partner',
+                    medium: 'affiliate',
+                    campaign: 'affiliate_program_' + new Date().toISOString().slice(0, 10)
+                },
+                newsletter: {
+                    source: 'newsletter',
+                    medium: 'email',
+                    campaign: 'weekly_newsletter_' + new Date().toISOString().slice(0, 10)
+                }
+            };
+
+            const preset = presets[type];
+            if (preset) {
+                source.value = preset.source;
+                medium.value = preset.medium;
+                campaign.value = preset.campaign;
+                generateURL();
+                showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} preset loaded!`);
+            }
+        }
+
+        function copyToClipboard() {
+            const url = document.getElementById('urlPreview').textContent;
+            if (url && url !== 'Enter your campaign details to generate a tracked URL' && !url.includes('Please fill')) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showNotification('URL copied to clipboard!');
+                });
+            } else {
+                showNotification('Please generate a valid URL first', 'error');
+            }
+        }
+
+        function generateQR() {
+            const url = document.getElementById('urlPreview').textContent;
+            if (url && url !== 'Enter your campaign details to generate a tracked URL' && !url.includes('Please fill')) {
+                const canvas = document.getElementById('qrcode');
+                const container = document.getElementById('qrContainer');
+                
+                QRCode.toCanvas(canvas, url, {
+                    width: 256,
+                    margin: 2,
+                    color: {
+                        dark: '#f1f5f9',
+                        light: 'transparent'
+                    }
+                }, function(error) {
+                    if (error) {
+                        showNotification('Error generating QR code', 'error');
+                    } else {
+                        container.style.display = 'block';
+                        currentQRCode = canvas;
+                        showNotification('QR code generated successfully!');
+                    }
+                });
+            } else {
+                showNotification('Please generate a valid URL first', 'error');
+            }
+        }
+
+        function downloadQR() {
+            if (currentQRCode) {
+                const link = document.createElement('a');
+                link.download = `utm-qr-${campaign.value || 'campaign'}.png`;
+                link.href = currentQRCode.toDataURL();
+                link.click();
+                showNotification('QR code downloaded!');
+            }
+        }
+
+        function saveCampaign() {
+            const url = document.getElementById('urlPreview').textContent;
+            const campaignName = campaign.value.trim();
+            
+            if (url && url !== 'Enter your campaign details to generate a tracked URL' && !url.includes('Please fill') && campaignName) {
+                const campaignData = {
+                    id: Date.now(),
+                    name: campaignName,
+                    url: url,
+                    source: source.value,
+                    medium: medium.value === 'custom' ? customMedium.value : medium.value,
+                    timestamp: new Date().toISOString()
+                };
+                
+                campaignHistory.unshift(campaignData);
+                if (campaignHistory.length > 10) campaignHistory.pop(); // Keep only last 10
+                
+                localStorage.setItem('campaignHistory', JSON.stringify(campaignHistory));
+                updateHistory();
+                showNotification('Campaign saved successfully!');
+            } else {
+                showNotification('Please generate a valid campaign first', 'error');
+            }
+        }
+
+        function updateHistory() {
+            const historyList = document.getElementById('historyList');
+            
+            if (campaignHistory.length === 0) {
+                historyList.innerHTML = '<p style="color: var(--neutral-400); font-style: italic;">No campaigns saved yet</p>';
+                return;
+            }
+
+            historyList.innerHTML = campaignHistory.map(campaign => `
+                <div class="history-item" onclick="loadCampaign('${campaign.id}')">
+                    <div class="history-name">${campaign.name}</div>
+                    <div class="history-url">${campaign.url}</div>
+                </div>
+            `).join('');
+        }
+
+        function loadCampaign(id) {
+            const campaignData = campaignHistory.find(c => c.id == id);
+            if (campaignData) {
+                // Extract parameters from saved URL
+                const urlObj = new URL(campaignData.url);
+                const params = new URLSearchParams(urlObj.search);
+                
+                baseUrl.value = `${urlObj.protocol}//${urlObj.host}${urlObj.pathname}`;
+                campaign.value = params.get('utm_campaign') || params.get('c') || '';
+                source.value = params.get('utm_source') || params.get('s') || '';
+                
+                const mediumValue = params.get('utm_medium') || params.get('m') || '';
+                if (['email', 'social', 'cpc', 'banner', 'affiliate', 'referral', 'direct', 'organic'].includes(mediumValue)) {
+                    medium.value = mediumValue;
+                } else {
+                    medium.value = 'custom';
+                    customMedium.value = mediumValue;
+                    document.getElementById('customMediumGroup').style.display = 'block';
+                }
+                
+                term.value = params.get('utm_term') || params.get('t') || '';
+                content.value = params.get('utm_content') || params.get('ct') || '';
+                
+                generateURL();
+                showNotification('Campaign loaded!');
+            }
+        }
+        
+        function shareCampaign() {
+            const url = document.getElementById('urlPreview').textContent;
+            if (url && url !== 'Enter your campaign details to generate a tracked URL' && !url.includes('Please fill')) {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'UTM Campaign Link',
+                        text: 'Check out this campaign link I created with UTM URL Builder Pro',
+                        url: url
+                    })
+                    .then(() => showNotification('Campaign shared successfully!'))
+                    .catch(error => showNotification('Sharing failed: ' + error, 'error'));
+                } else {
+                    copyToClipboard();
+                    showNotification('URL copied to clipboard. Share it manually.');
+                }
+            } else {
+                showNotification('Please generate a valid URL first', 'error');
+            }
+        }
+        
+        function applySuggestion(type) {
+            if (type === 'source') {
+                content.value = 'cta_button';
+                showNotification('Suggestion applied: Added utm_content parameter');
+            } else if (type === 'medium') {
+                customParam1.value = 'ref=ai_suggestion';
+                showNotification('Suggestion applied: Added custom parameter');
+            }
+            generateURL();
+        }
+
+        function initCharts() {
+            const channelCtx = document.getElementById('channelChart').getContext('2d');
+            const effectivenessCtx = document.getElementById('effectivenessChart').getContext('2d');
+            
+            // Channel performance chart
+            channelChart = new Chart(channelCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Email', 'Social', 'PPC', 'Organic', 'Direct'],
+                    datasets: [{
+                        label: 'Conversion Rate (%)',
+                        data: [12, 8, 15, 9, 5],
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.7)',
+                            'rgba(118, 75, 162, 0.7)',
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(102, 126, 234, 1)',
+                            'rgba(118, 75, 162, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(245, 158, 11, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Campaign effectiveness chart
+            effectivenessChart = new Chart(effectivenessCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Email', 'Social', 'PPC', 'Organic', 'Direct'],
+                    datasets: [{
+                        label: 'Effectiveness',
+                        data: [25, 20, 30, 15, 10],
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.7)',
+                            'rgba(118, 75, 162, 0.7)',
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(102, 126, 234, 1)',
+                            'rgba(118, 75, 162, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(245, 158, 11, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateCharts() {
+            // Simulate updating charts based on campaign data
+            if (channelChart && effectivenessChart) {
+                // Randomize data for demo purposes
+                const newChannelData = channelChart.data.datasets[0].data.map(() => 
+                    Math.floor(Math.random() * 15) + 5
+                );
+                
+                const newEffectivenessData = effectivenessChart.data.datasets[0].data.map(() => 
+                    Math.floor(Math.random() * 30) + 10
+                );
+                
+                channelChart.data.datasets[0].data = newChannelData;
+                effectivenessChart.data.datasets[0].data = newEffectivenessData;
+                
+                channelChart.update();
+                effectivenessChart.update();
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
